@@ -1,0 +1,44 @@
+{
+	"schemaVersion": 1,
+	"id": "digsites",
+	"version": "${version}",
+	"name": "Digsites",
+	"description": "This is an example description! Tell everyone what your mod is about!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/digsites/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"kishso.digsites.Digsites"
+		],
+		"client": [
+			"kishso.digsites.DigsitesClient"
+		],
+		"fabric-datagen": [
+			"kishso.digsites.DigsitesDataGenerator"
+		]
+	},
+	"mixins": [
+		"digsites.mixins.json",
+		{
+			"config": "digsites.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.15.11",
+		"minecraft": "~1.21",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
