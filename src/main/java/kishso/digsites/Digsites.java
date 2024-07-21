@@ -2,8 +2,12 @@ package kishso.digsites;
 
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static net.minecraft.server.command.CommandManager.literal;
+
 
 public class Digsites implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -18,5 +22,8 @@ public class Digsites implements ModInitializer {
 		// Proceed with mild caution.
 
 		LOGGER.info("Hello Fabric world!");
+
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> DigsiteCommand.register(dispatcher));
+		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> GetBlockStateCommand.register(dispatcher)));
 	}
 }
