@@ -2,6 +2,8 @@ package kishso.digsites;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.loot.v2.LootTableSource;
 import net.minecraft.block.Block;
@@ -10,10 +12,15 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.BrushableBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BrushableBlockEntity;
+import net.minecraft.command.argument.ArgumentTypes;
 import net.minecraft.component.ComponentMap;
 import net.minecraft.data.server.loottable.vanilla.VanillaLootTableProviders;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.server.command.LootCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -30,16 +37,19 @@ import net.minecraft.world.gen.feature.SimpleRandomFeature;
 
 import java.util.Random;
 
+import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public final class DigsiteCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("triggerDigsiteUpdate")
-                                .executes(ctx -> run(ctx.getSource()))); // You can deal with the arguments out here and pipe them into the command.
+                                .then(argument("lootTable", StringArgumentType.string())
+                                .then(argument("chance", FloatArgumentType.floatArg(0.0f,1.0f))
+                .executes(ctx -> run(ctx.getSource(), StringArgumentType.getString(ctx, "lootTable"), FloatArgumentType.getFloat(ctx, "chance")))))); // You can deal with the arguments out here and pipe them into the command.
     }
 
-    public static int run(ServerCommandSource source)
+    public static int run(ServerCommandSource source, String lootTable, float chance)
     {
         Vec3d origPos = source.getPosition();
         ServerWorld world = source.getWorld();
@@ -50,30 +60,28 @@ public final class DigsiteCommand {
         BlockPos centerPos = new BlockPos((int)origPos.getX(), (int)origPos.getY(), (int)origPos.getZ());
 
         Random rand = new Random();
+        Identifier lootTableId = Identifier.tryParse(lootTable);
 
-        for(int x = (-1*radius); x < radius; x++)
-        {
-            for(int y = (-1*radius); y < radius; y++)
-            {
-                for(int z = (-1*radius); z < radius; z++)
-                {
-                    numBlocksChecked++;
-                    BlockPos targetBlock = centerPos.add(x,y,z);
-                    BlockState block = world.getBlockState(targetBlock);
-                    if(block.isOf(Blocks.GRAVEL))
-                    {
-                        BlockState newBlockState = Blocks.SUSPICIOUS_GRAVEL.getDefaultState();
-                        BrushableBlock newBlock = (BrushableBlock) newBlockState.getBlock();
+        if(lootTableId != null) {
+            for (int x = (-1 * radius); x < radius; x++) {
+                for (int y = (-1 * radius); y < radius; y++) {
+                    for (int z = (-1 * radius); z < radius; z++) {
+                        numBlocksChecked++;
+                        BlockPos targetBlock = centerPos.add(x, y, z);
+                        BlockState block = world.getBlockState(targetBlock);
+                        if (block.isOf(Blocks.GRAVEL) && rand.nextFloat() <= chance) {
+                            BlockState newBlockState = Blocks.SUSPICIOUS_GRAVEL.getDefaultState();
+                            BrushableBlock newBlock = (BrushableBlock) newBlockState.getBlock();
 
-                        world.setBlockState(targetBlock, newBlockState);
+                            world.setBlockState(targetBlock, newBlockState);
 
-                        if(newBlockState.hasBlockEntity())
-                        {
-                            BrushableBlockEntity blockEntity = (BrushableBlockEntity)world.getBlockEntity(targetBlock);
-                            blockEntity.setLootTable(LootTables.TRAIL_RUINS_RARE_ARCHAEOLOGY, rand.nextLong());
+                            if (newBlockState.hasBlockEntity()) {
+                                BrushableBlockEntity blockEntity = (BrushableBlockEntity) world.getBlockEntity(targetBlock);
+                                blockEntity.setLootTable(RegistryKey.of(RegistryKeys.LOOT_TABLE, lootTableId), rand.nextLong());
+                            }
+
+                            numBlocksReplaced++;
                         }
-
-                        numBlocksReplaced++;
                     }
                 }
             }
