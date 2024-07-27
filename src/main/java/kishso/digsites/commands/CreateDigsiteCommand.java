@@ -43,9 +43,9 @@ public final class CreateDigsiteCommand {
                           int xDelta, int yDelta, int zDelta, String lootTable)
     {
 
-        DigsiteBookkeeper serverState = DigsiteBookkeeper.getServerState(source.getServer());
+        DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
         Digsite newSite = new Digsite(pos, xDelta, yDelta,zDelta, lootTable);
-        serverState.AddDigsite(uuid, newSite);
+        worldState.AddDigsite(uuid, newSite);
 
         source.sendMessage(Text.literal("Created Digsite!"));
         return Command.SINGLE_SUCCESS; // Success

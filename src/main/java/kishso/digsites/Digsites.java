@@ -1,6 +1,7 @@
 package kishso.digsites;
 
 import kishso.digsites.commands.CreateDigsiteCommand;
+import kishso.digsites.commands.RemoveDigsiteCommand;
 import kishso.digsites.commands.TriggerDigsiteCommand;
 import net.fabricmc.api.ModInitializer;
 
@@ -28,5 +29,6 @@ public class Digsites implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> TriggerDigsiteCommand.register(dispatcher));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> GetBlockStateCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> CreateDigsiteCommand.register(dispatcher)));
+		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> RemoveDigsiteCommand.register(dispatcher)));
 	}
 }

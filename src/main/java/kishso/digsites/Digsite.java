@@ -49,12 +49,31 @@ public class Digsite {
 
     public NbtElement toNbt()
     {
-        return new NbtCompound();
+        NbtCompound nbt = new NbtCompound();
+
+        nbt.putIntArray("location", new int[]{location.getX(), location.getY(), location.getZ()});
+        nbt.putIntArray("deltaReach", new int[]{xDeltaReach, yDeltaReach, zDeltaReach});
+        nbt.putString("lootTable", lootTable.getValue().toString());
+
+        return nbt;
     }
 
     public static Digsite fromNbt(NbtElement nbt)
     {
-        return new Digsite(new BlockPos(0,0,0), 0, 0,0, "");
+        if(nbt instanceof NbtCompound)
+        {
+            NbtCompound root = (NbtCompound)nbt;
+
+            int[] locationCoords = root.getIntArray("location");
+            int[] deltaReachList = root.getIntArray("deltaReach");
+            String lootTableString = root.getString("lootTable");
+
+            return new Digsite(
+                    new BlockPos(locationCoords[0],locationCoords[1],locationCoords[2]),
+                    deltaReachList[0], deltaReachList[1],deltaReachList[2],
+                    lootTableString);
+        }
+        return null;
     }
 
     public int triggerDigsite(World world)

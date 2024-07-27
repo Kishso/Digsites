@@ -3,6 +3,7 @@ package kishso.digsites;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
@@ -25,6 +26,11 @@ public class DigsiteBookkeeper extends PersistentState {
 
     public static DigsiteBookkeeper createFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         DigsiteBookkeeper state = new DigsiteBookkeeper();
+        for(String id : tag.getKeys())
+        {
+            UUID uuid = UUID.fromString(id);
+            state.AddDigsite(uuid,Digsite.fromNbt(tag.getCompound(id)));
+        }
         return state;
     }
 
@@ -39,14 +45,19 @@ public class DigsiteBookkeeper extends PersistentState {
         this.digsitesInWorld.put(digsiteUUID, newDigsite);
     }
 
+    public boolean RemoveDigsite(UUID digsiteUUID)
+    {
+        return digsitesInWorld.remove(digsiteUUID) != null;
+    }
+
     public Digsite GetDigsite(UUID digsiteUUID)
     {
         return this.digsitesInWorld.getOrDefault(digsiteUUID, null);
     }
 
-    public static DigsiteBookkeeper getServerState(MinecraftServer server)
+    public static DigsiteBookkeeper getWorldState(ServerWorld world)
     {
-        PersistentStateManager persistentStateManager = server.getWorld(World.OVERWORLD).getPersistentStateManager();
+        PersistentStateManager persistentStateManager = world.getPersistentStateManager();
 
         DigsiteBookkeeper digsitesState = persistentStateManager.getOrCreate(type, Digsites.MOD_ID);
 
