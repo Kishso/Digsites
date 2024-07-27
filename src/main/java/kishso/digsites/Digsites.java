@@ -1,12 +1,12 @@
 package kishso.digsites;
 
+import kishso.digsites.commands.CreateDigsiteCommand;
+import kishso.digsites.commands.TriggerDigsiteCommand;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static net.minecraft.server.command.CommandManager.literal;
 
 
 public class Digsites implements ModInitializer {
@@ -14,6 +14,8 @@ public class Digsites implements ModInitializer {
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("digsites");
+
+	public static final String MOD_ID = "kishso.digsites";
 
 	@Override
 	public void onInitialize() {
@@ -23,7 +25,8 @@ public class Digsites implements ModInitializer {
 
 		LOGGER.info("Hello Fabric world!");
 
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> DigsiteCommand.register(dispatcher));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> TriggerDigsiteCommand.register(dispatcher));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> GetBlockStateCommand.register(dispatcher)));
+		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> CreateDigsiteCommand.register(dispatcher)));
 	}
 }

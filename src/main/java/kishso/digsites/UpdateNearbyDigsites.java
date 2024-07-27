@@ -4,49 +4,31 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
-import net.fabricmc.fabric.api.loot.v2.LootTableSource;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.BrushableBlock;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BrushableBlockEntity;
-import net.minecraft.command.argument.ArgumentTypes;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.data.server.loottable.vanilla.VanillaLootTableProviders;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTables;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.SimpleRegistry;
-import net.minecraft.server.command.LootCommand;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.EnumProperty;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.gen.feature.SimpleRandomFeature;
-
 
 import java.util.Random;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
-public final class DigsiteCommand {
+public final class UpdateNearbyDigsites {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
-        dispatcher.register(literal("triggerDigsiteUpdate")
-                                .then(argument("lootTable", StringArgumentType.string())
-                                .then(argument("chance", FloatArgumentType.floatArg(0.0f,1.0f))
-                .executes(ctx -> run(ctx.getSource(), StringArgumentType.getString(ctx, "lootTable"), FloatArgumentType.getFloat(ctx, "chance")))))); // You can deal with the arguments out here and pipe them into the command.
+        dispatcher.register(literal("UpdateNearbyDigsites")
+                .then(argument("lootTable", StringArgumentType.string())
+                        .then(argument("chance", FloatArgumentType.floatArg(0.0f,1.0f))
+                                .executes(ctx -> run(ctx.getSource(), StringArgumentType.getString(ctx, "lootTable"), FloatArgumentType.getFloat(ctx, "chance")))))); // You can deal with the arguments out here and pipe them into the command.
     }
 
     public static int run(ServerCommandSource source, String lootTable, float chance)
