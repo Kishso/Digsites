@@ -12,14 +12,13 @@ import java.util.UUID;
 
 public class DigsiteBookkeeper extends PersistentState {
 
-    protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<UUID,Digsite>();
+    protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         digsitesInWorld.forEach( (UUID id, Digsite site) ->
-        {
-            nbt.put(id.toString(), site.toNbt());
-        });
+            nbt.put(id.toString(), site.toNbt())
+        );
 
         return nbt;
     }

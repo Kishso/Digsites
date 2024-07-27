@@ -27,9 +27,9 @@ public class Digsite {
 
     private RegistryKey<LootTable> lootTable;
 
-    public Digsite(BlockPos posiition, int xDelta, int yDelta, int zDelta, String lootTableIdString)
+    public Digsite(BlockPos position, int xDelta, int yDelta, int zDelta, String lootTableIdString)
     {
-        this.location = posiition;
+        this.location = position;
         this.xDeltaReach = xDelta;
         this.yDeltaReach = yDelta;
         this.zDeltaReach = zDelta;

@@ -9,10 +9,8 @@ import kishso.digsites.DigsiteBookkeeper;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 
 import java.util.UUID;
 
