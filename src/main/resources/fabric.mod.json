@@ -22,7 +22,7 @@
 			"kishso.digsites.DigsitesClient"
 		],
 		"fabric-datagen": [
-			"kishso.digsites.DigsitesDataGenerator"
+			"kishso.digsites.datagen.DigsitesDataGenerator"
 		]
 	},
 	"mixins": [
