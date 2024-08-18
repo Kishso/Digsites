@@ -23,7 +23,9 @@ public class Digsite {
     private int yDeltaReach;
     private int zDeltaReach;
 
-    private float convertPercentage = 0.2f;
+    private float convertPercentage = 0.05f;
+    private int tickFrequency = 24000;
+    private int currentFrequencyCount = 0;
 
     private RegistryKey<LootTable> lootTable;
 

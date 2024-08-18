@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "kishso.digsites:digsite_lush_cave",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt" : 123456789,
+    "type": "random_spread",
+    "spacing": 16,
+    "separation": 10
+  }
+}
