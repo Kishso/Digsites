@@ -1,4 +1,4 @@
 package kishso.digsites;
 
-public class DigsiteTag {
+public class DigsiteType {
 }
