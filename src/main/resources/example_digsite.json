@@ -1,8 +1,0 @@
-{
-  "loot_table_id" : "digsite_normal",
-  "update" :
-  {
-    "chance_to_convert" : 0.2,
-    "tick_frequency": 24000
-  }
-}

@@ -2,13 +2,9 @@ package kishso.digsites;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
-import net.minecraft.world.World;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -16,7 +12,7 @@ import java.util.UUID;
 public class DigsiteBookkeeper extends PersistentState {
 
     protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
-    protected HashMap<String,DigsiteType> loadedDigsiteTypes= new HashMap<>();
+    protected HashMap<String, DigsiteArgumentType> loadedDigsiteTypes= new HashMap<>();
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {

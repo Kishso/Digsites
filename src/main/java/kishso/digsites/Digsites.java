@@ -1,26 +1,24 @@
 package kishso.digsites;
 
-import it.unimi.dsi.fastutil.longs.LongSet;
 import kishso.digsites.commands.CreateDigsiteCommand;
+import kishso.digsites.commands.PlaceDigsiteMarkerCommand;
 import kishso.digsites.commands.RemoveDigsiteCommand;
 import kishso.digsites.commands.TriggerDigsiteCommand;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
-import net.minecraft.loot.entry.LootPoolEntryTypes;
-import net.minecraft.registry.Registry;
-import net.minecraft.server.world.ServerWorld;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.structure.JigsawStructure;
 import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.structure.StructureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.EventListener;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -30,7 +28,7 @@ public class Digsites implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("digsites");
 
-	public static final String MOD_ID = "kishso.digsites";
+	public static final String MOD_ID = "digsites";
 
 	@Override
 	public void onInitialize() {
@@ -41,9 +39,15 @@ public class Digsites implements ModInitializer {
 		LOGGER.info("Digsites Mod Init!");
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> TriggerDigsiteCommand.register(dispatcher));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> PlaceDigsiteMarkerCommand.register(dispatcher));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> GetBlockStateCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> CreateDigsiteCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> RemoveDigsiteCommand.register(dispatcher)));
+
+		ArgumentTypeRegistry.registerArgumentType(Identifier.tryParse(MOD_ID, "digsiteType"),
+				DigsiteArgumentType.class, ConstantArgumentSerializer.of(DigsiteArgumentType::digsiteType));
+
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new DigsiteResourceListener());
 
 		ServerChunkEvents.CHUNK_LOAD.register((serverWorld, listener) -> {
 			if(listener.hasStructureReferences())
@@ -54,7 +58,8 @@ public class Digsites implements ModInitializer {
 				{
 					if(s instanceof JigsawStructure)
 					{
-
+						StructureType structType = s.getType();
+						LOGGER.info(s.toString());
 					}
 				});
 			}
