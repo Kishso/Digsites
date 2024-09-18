@@ -12,8 +12,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.StructureSpawns;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -58,25 +60,16 @@ public class Digsites implements ModInitializer {
 		ServerChunkEvents.CHUNK_LOAD.register((serverWorld, listener) -> {
 			if(listener.hasStructureReferences())
 			{
-				Chunk targetChunk = serverWorld.getChunkManager().getChunk(listener.getPos().x, listener.getPos().z, ChunkStatus.EMPTY, false);
-				if(targetChunk == null)
-				{
-					LOGGER.info("Chunk generating...");
-				}
-
-				ChunkStatus status = listener.getStatus();
-				Set<Structure> structures = listener.getStructureReferences().keySet();
-
-				structures.forEach((s) ->
-				{
-					if(s instanceof JigsawStructure)
+				long inhabitedTime = listener.getInhabitedTime();
+				LOGGER.info("Chunk inhabited time: " + String.valueOf(inhabitedTime));
+				if(inhabitedTime == 0) {
+					Box chunkBox = new Box(listener.getPos().getStartPos());
+					serverWorld.getEntitiesByClass(DisplayEntity.ItemDisplayEntity.class, chunkBox, (entity) ->
 					{
-						s.getStructureSpawns().forEach((SpawnGroup sg, StructureSpawns ss) -> {
-							// LOGGER.info(sg.name());
-						});
-
-					}
-				});
+						return true;
+					});
+					LOGGER.info("Chunk fresh...");
+				}
 			}
 		});
 
