@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
+import kishso.digsites.DigsiteType;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -53,11 +54,14 @@ public final class CreateDigsiteCommand {
     {
 
         DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
-        Digsite newSite = new Digsite(pos,
+
+        DigsiteType type = new DigsiteType(
+                "Custom",
                 xDeltaLower, xDeltaUpper,
                 yDeltaLower, yDeltaUpper,
                 zDeltaLower, zDeltaUpper,
-                lootTable);
+                0.02f, 240000, lootTable);
+        Digsite newSite = new Digsite(pos, type);
         worldState.AddDigsite(uuid, newSite);
 
         source.sendMessage(Text.literal("Created Digsite!"));

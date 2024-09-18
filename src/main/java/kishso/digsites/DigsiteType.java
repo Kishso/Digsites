@@ -11,7 +11,7 @@ import java.awt.font.NumericShaper;
 
 public class DigsiteType {
 
-    public class Range<T> {
+    public static class Range<T> {
         public final T Lower;
         public final T Upper;
 
@@ -35,12 +35,15 @@ public class DigsiteType {
     private String lootTableString;
 
     public DigsiteType(
+            String digsiteTypeString,
            int xRangeLower, int xRangeUpper,
            int yRangeLower, int yRangeUpper,
            int zRangeLower, int zRangeUpper,
            float convertPercentage, int tickFrequency,
            String lootTableIdString)
     {
+        this.digsiteTypeId = digsiteTypeString;
+
         this.xRange = new Range<Integer>(xRangeLower, xRangeUpper);
         this.yRange = new Range<Integer>(yRangeLower, yRangeUpper);
         this.zRange = new Range<Integer>(zRangeLower, zRangeUpper);
@@ -89,7 +92,7 @@ public class DigsiteType {
     public NbtElement toNbt()
     {
         NbtCompound nbt = new NbtCompound();
-
+        nbt.putString("type_id", digsiteTypeId);
         nbt.putIntArray("xRange", new int[]{xRange.Lower, xRange.Upper});
         nbt.putIntArray("yRange", new int[]{yRange.Lower, yRange.Upper});
         nbt.putIntArray("zRange", new int[]{zRange.Lower, zRange.Upper});
@@ -105,6 +108,7 @@ public class DigsiteType {
         if(nbt instanceof NbtCompound)
         {
             NbtCompound root = (NbtCompound)nbt;
+            String type = root.getString("type_id");
 
             int[] xRangeList = root.getIntArray("xRange");
             int[] yRangeList = root.getIntArray("yRange");
@@ -115,6 +119,7 @@ public class DigsiteType {
             int tickFreq = root.getInt("tickFrequency");
 
             return new DigsiteType(
+                    type,
                     xRangeList[0], xRangeList[1],
                     yRangeList[0], yRangeList[1],
                     zRangeList[0], zRangeList[1],

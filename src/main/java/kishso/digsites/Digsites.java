@@ -11,14 +11,20 @@ import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.StructureSpawns;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.structure.JigsawStructure;
 import net.minecraft.world.gen.structure.Structure;
 import net.minecraft.world.gen.structure.StructureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Set;
 
 
@@ -52,14 +58,23 @@ public class Digsites implements ModInitializer {
 		ServerChunkEvents.CHUNK_LOAD.register((serverWorld, listener) -> {
 			if(listener.hasStructureReferences())
 			{
+				Chunk targetChunk = serverWorld.getChunkManager().getChunk(listener.getPos().x, listener.getPos().z, ChunkStatus.EMPTY, false);
+				if(targetChunk == null)
+				{
+					LOGGER.info("Chunk generating...");
+				}
+
+				ChunkStatus status = listener.getStatus();
 				Set<Structure> structures = listener.getStructureReferences().keySet();
 
 				structures.forEach((s) ->
 				{
 					if(s instanceof JigsawStructure)
 					{
-						StructureType structType = s.getType();
-						LOGGER.info(s.toString());
+						s.getStructureSpawns().forEach((SpawnGroup sg, StructureSpawns ss) -> {
+							// LOGGER.info(sg.name());
+						});
+
 					}
 				});
 			}

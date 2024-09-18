@@ -12,7 +12,7 @@ import java.util.UUID;
 public class DigsiteBookkeeper extends PersistentState {
 
     protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
-    protected HashMap<String, DigsiteArgumentType> loadedDigsiteTypes= new HashMap<>();
+    protected HashMap<String, DigsiteArgumentType> loadedDigsiteTypes = new HashMap<>();
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
