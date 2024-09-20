@@ -6,29 +6,53 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class DigsiteBookkeeper extends PersistentState {
 
     protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
     protected HashMap<String, DigsiteArgumentType> loadedDigsiteTypes = new HashMap<>();
+    public List<UUID> placedDigsiteMarkers = new ArrayList<>();
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        NbtCompound digsitesNbt = new NbtCompound();
         digsitesInWorld.forEach( (UUID id, Digsite site) ->
-            nbt.put(id.toString(), site.toNbt())
+            digsitesNbt.put(id.toString(), site.toNbt())
         );
+        nbt.put("digsitesInWorld", digsitesNbt);
+
+        NbtCompound placedMarkersNbt = new NbtCompound();
+        placedDigsiteMarkers.forEach((UUID id) -> {
+                placedMarkersNbt.putUuid(id.toString(), id);
+            }
+        );
+        nbt.put("placedDigsiteMarkers", placedMarkersNbt);
+
 
         return nbt;
     }
 
     public static DigsiteBookkeeper createFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         DigsiteBookkeeper state = new DigsiteBookkeeper();
-        for(String id : tag.getKeys())
-        {
-            UUID uuid = UUID.fromString(id);
-            state.AddDigsite(uuid,Digsite.fromNbt(tag.getCompound(id)));
+
+        NbtCompound digsitesNbt = tag.getCompound("digsitesInWorld");
+        if(digsitesNbt != null) {
+            for (String id : digsitesNbt.getKeys()) {
+                UUID uuid = UUID.fromString(id);
+                state.AddDigsite(uuid, Digsite.fromNbt(tag.getCompound(id)));
+            }
+        }
+
+        NbtCompound placedMarkersNbt = tag.getCompound("placedDigsiteMarkers");
+        if(placedMarkersNbt != null) {
+            for (String id : placedMarkersNbt.getKeys()) {
+                UUID uuid = UUID.fromString(id);
+                state.placedDigsiteMarkers.add(uuid);
+            }
         }
         return state;
     }

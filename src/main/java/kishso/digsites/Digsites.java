@@ -9,13 +9,15 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Box;
+import net.minecraft.util.math.*;
 import net.minecraft.world.StructureSpawns;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkStatus;
@@ -26,6 +28,7 @@ import net.minecraft.world.gen.structure.StructureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +40,8 @@ public class Digsites implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("digsites");
 
 	public static final String MOD_ID = "digsites";
+
+
 
 	@Override
 	public void onInitialize() {
@@ -57,18 +62,19 @@ public class Digsites implements ModInitializer {
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new DigsiteResourceListener());
 
-		ServerChunkEvents.CHUNK_LOAD.register((serverWorld, listener) -> {
-			if(listener.hasStructureReferences())
+		ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
+			if(entity instanceof DisplayEntity.ItemDisplayEntity)
 			{
-				long inhabitedTime = listener.getInhabitedTime();
-				LOGGER.info("Chunk inhabited time: " + String.valueOf(inhabitedTime));
-				if(inhabitedTime == 0) {
-					Box chunkBox = new Box(listener.getPos().getStartPos());
-					serverWorld.getEntitiesByClass(DisplayEntity.ItemDisplayEntity.class, chunkBox, (entity) ->
-					{
-						return true;
-					});
-					LOGGER.info("Chunk fresh...");
+				if(entity.getCommandTags().contains("isDigsite"))
+				{
+					DigsiteBookkeeper bookKeeper = DigsiteBookkeeper.getWorldState(serverWorld);
+					if(bookKeeper.placedDigsiteMarkers.contains(entity.getUuid())){
+						LOGGER.info("Found Digsite Place Marker...");
+					}
+					else {
+						LOGGER.info("Found Digsite Structure Marker");
+					}
+
 				}
 			}
 		});

@@ -64,13 +64,16 @@ public final class PlaceDigsiteMarkerCommand {
             entityNbt.putString("item_display","fixed");
             entityNbt.put("item", itemIdNbt);
 
+            DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
+            worldState.placedDigsiteMarkers.add(itemDisplayEntity.getUuid());
+
             itemDisplayEntity.readNbt(entityNbt);
         }
 
+        source.getWorld().spawnEntity(itemDisplayEntity);
+
         itemDisplayEntity.addCommandTag("isDigsite");
         itemDisplayEntity.addCommandTag("digsiteType:"+digsiteTypeId);
-
-        source.getWorld().spawnEntity(itemDisplayEntity);
 
         source.sendMessage(Text.literal("Placed Digsite Marker!"));
         return Command.SINGLE_SUCCESS; // Success
