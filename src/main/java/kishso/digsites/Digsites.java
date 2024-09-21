@@ -28,9 +28,7 @@ import net.minecraft.world.gen.structure.StructureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 public class Digsites implements ModInitializer {
@@ -73,6 +71,23 @@ public class Digsites implements ModInitializer {
 					}
 					else {
 						LOGGER.info("Found Digsite Structure Marker");
+						Optional<String> digsiteTypeTag = entity.getCommandTags().stream().filter(
+								(str) -> {return str.contains("digsiteType");}
+						).findFirst();
+						if(digsiteTypeTag.isPresent())
+						{
+							Optional<String> digsiteTypeStr =
+									Arrays.stream(digsiteTypeTag.get().split(":")).findFirst();
+							if(digsiteTypeStr.isPresent())
+							{
+								if(bookKeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr.get())){
+									DigsiteType digsiteType = bookKeeper.loadedDigsiteTypes.get(digsiteTypeStr.get());
+									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType);
+									bookKeeper.AddDigsite(entity.getUuid(), newDigsite);
+								}
+							}
+						}
+						entity.remove(Entity.RemovalReason.DISCARDED);
 					}
 
 				}

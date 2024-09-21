@@ -14,7 +14,7 @@ import java.util.UUID;
 public class DigsiteBookkeeper extends PersistentState {
 
     protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
-    protected HashMap<String, DigsiteArgumentType> loadedDigsiteTypes = new HashMap<>();
+    protected HashMap<String, DigsiteType> loadedDigsiteTypes = new HashMap<>();
     public List<UUID> placedDigsiteMarkers = new ArrayList<>();
 
     @Override

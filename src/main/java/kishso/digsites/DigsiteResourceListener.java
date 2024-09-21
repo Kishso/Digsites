@@ -16,7 +16,6 @@ public class DigsiteResourceListener implements SimpleSynchronousResourceReloadL
     @Override
     public void reload(ResourceManager manager) {
         // Clear Caches Here
-
         for(Identifier id : manager.findResources("worldgen/digsites", path -> path.getPath().endsWith(".json")).keySet()) {
             continue;
         }
