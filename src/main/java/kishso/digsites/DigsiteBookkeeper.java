@@ -14,7 +14,7 @@ import java.util.UUID;
 public class DigsiteBookkeeper extends PersistentState {
 
     protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
-    protected HashMap<String, DigsiteType> loadedDigsiteTypes = new HashMap<>();
+    protected static HashMap<String, DigsiteType> loadedDigsiteTypes = new HashMap<>();
     public List<UUID> placedDigsiteMarkers = new ArrayList<>();
 
     @Override
@@ -89,8 +89,16 @@ public class DigsiteBookkeeper extends PersistentState {
         return digsitesState;
     }
 
-    public void LoadDigsiteTypes()
+    public static void LoadDigsiteTypes(String digsiteId, DigsiteType type)
     {
+        loadedDigsiteTypes.put(digsiteId, type);
+    }
 
+    public static DigsiteType GetDigsiteType(String digsiteId)
+    {
+        if(loadedDigsiteTypes.containsKey(digsiteId)){
+            return loadedDigsiteTypes.get(digsiteId);
+        }
+        return null;
     }
 }
