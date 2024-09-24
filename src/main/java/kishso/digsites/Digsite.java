@@ -20,7 +20,6 @@ import java.util.Random;
 public class Digsite {
 
     private BlockPos location;
-    private int currentFrequencyCount = 0;
 
     private DigsiteType digsiteType;
     private RegistryKey<LootTable> lootTable;
@@ -69,6 +68,10 @@ public class Digsite {
                     type);
         }
         return null;
+    }
+
+    public DigsiteType getDigsiteType(){
+        return digsiteType;
     }
 
     public int triggerDigsite(World world)

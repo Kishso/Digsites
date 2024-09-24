@@ -11,11 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import static kishso.digsites.Digsites.LOGGER;
+
 public class DigsiteBookkeeper extends PersistentState {
 
     protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
+
     protected static HashMap<String, DigsiteType> loadedDigsiteTypes = new HashMap<>();
     public List<UUID> placedDigsiteMarkers = new ArrayList<>();
+
+    protected static int tickCount = 0;
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
@@ -32,6 +37,7 @@ public class DigsiteBookkeeper extends PersistentState {
         );
         nbt.put("placedDigsiteMarkers", placedMarkersNbt);
 
+        nbt.putInt("currentTickCount", tickCount);
 
         return nbt;
     }
@@ -54,6 +60,9 @@ public class DigsiteBookkeeper extends PersistentState {
                 state.placedDigsiteMarkers.add(uuid);
             }
         }
+
+        tickCount =  tag.getInt("currentTickCount");
+
         return state;
     }
 
@@ -65,6 +74,7 @@ public class DigsiteBookkeeper extends PersistentState {
 
     public void AddDigsite(UUID digsiteUUID, Digsite newDigsite)
     {
+        LOGGER.info("Added Digsite ["+digsiteUUID.toString()+"]");
         this.digsitesInWorld.put(digsiteUUID, newDigsite);
     }
 
@@ -100,5 +110,17 @@ public class DigsiteBookkeeper extends PersistentState {
             return loadedDigsiteTypes.get(digsiteId);
         }
         return null;
+    }
+
+    public void UpdateTickDigsitesInWorld(ServerWorld world)
+    {
+        tickCount++;
+        digsitesInWorld.forEach((uuid, digsite) -> {
+            DigsiteType type = digsite.getDigsiteType();
+            if(tickCount % type.getTickFrequency() == 0){
+                LOGGER.info("Triggering Digsite [" + uuid.toString() + "]");
+                digsite.triggerDigsite(world);
+            }
+        });
     }
 }

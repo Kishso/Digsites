@@ -8,14 +8,14 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerChunkEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.*;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.*;
 import net.minecraft.world.StructureSpawns;
@@ -76,15 +76,16 @@ public class Digsites implements ModInitializer {
 						).findFirst();
 						if(digsiteTypeTag.isPresent())
 						{
-							Optional<String> digsiteTypeStr =
-									Arrays.stream(digsiteTypeTag.get().split(":")).findFirst();
-							if(digsiteTypeStr.isPresent())
+							String digsiteTypeStr =
+									Arrays.stream(digsiteTypeTag.get().split(":")).toList().get(1);
+							if(digsiteTypeStr != null)
 							{
-								if(bookKeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr.get())){
-									DigsiteType digsiteType = bookKeeper.loadedDigsiteTypes.get(digsiteTypeStr.get());
+								if(bookKeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
+									DigsiteType digsiteType = bookKeeper.loadedDigsiteTypes.get(digsiteTypeStr);
 									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType);
 									bookKeeper.AddDigsite(entity.getUuid(), newDigsite);
 								}
+								LOGGER.info("Placed Digsite Structure");
 							}
 						}
 						entity.remove(Entity.RemovalReason.DISCARDED);
@@ -92,6 +93,13 @@ public class Digsites implements ModInitializer {
 
 				}
 			}
+		});
+
+		ServerTickEvents.END_WORLD_TICK.register((listener) -> {
+			ServerWorld world = listener.toServerWorld();
+			DigsiteBookkeeper bookkeeper = DigsiteBookkeeper.getWorldState(world);
+
+			bookkeeper.UpdateTickDigsitesInWorld(world);
 		});
 
 

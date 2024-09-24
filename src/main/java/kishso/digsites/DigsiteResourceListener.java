@@ -22,6 +22,8 @@ import java.util.Optional;
 
 import static kishso.digsites.Digsites.MOD_ID;
 
+
+
 public class DigsiteResourceListener implements SimpleSynchronousResourceReloadListener {
 
     @Override

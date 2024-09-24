@@ -1,6 +1,6 @@
 {
-  "digsite_type_id" : "lush_cave",
-  "loot_table_type_id" : "digsite_normal",
+  "digsite_type_id" : "lush_digsite",
+  "loot_table_type_id" : "digsites:digsite_normal",
   "bounds" :
   {
     "x_range": {
