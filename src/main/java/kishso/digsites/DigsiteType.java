@@ -2,12 +2,6 @@ package kishso.digsites;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-
-import java.awt.font.NumericShaper;
 
 public class DigsiteType {
 
@@ -24,15 +18,15 @@ public class DigsiteType {
 
     protected String digsiteTypeId;
 
-    private Range<Integer> xRange;
-    private Range<Integer> yRange;
-    private Range<Integer> zRange;
+    private final Range<Integer> xRange;
+    private final Range<Integer> yRange;
+    private final Range<Integer> zRange;
 
 
-    private float convertPercentage = 0.05f;
-    private int tickFrequency = 24000;
+    private final float convertPercentage;
+    private final int tickFrequency;
 
-    private String lootTableString;
+    private final String lootTableString;
 
     public DigsiteType(
             String digsiteTypeString,
@@ -44,9 +38,9 @@ public class DigsiteType {
     {
         this.digsiteTypeId = digsiteTypeString;
 
-        this.xRange = new Range<Integer>(xRangeLower, xRangeUpper);
-        this.yRange = new Range<Integer>(yRangeLower, yRangeUpper);
-        this.zRange = new Range<Integer>(zRangeLower, zRangeUpper);
+        this.xRange = new Range<>(xRangeLower, xRangeUpper);
+        this.yRange = new Range<>(yRangeLower, yRangeUpper);
+        this.zRange = new Range<>(zRangeLower, zRangeUpper);
 
         this.convertPercentage = convertPercentage;
         this.tickFrequency = tickFrequency;
@@ -54,10 +48,10 @@ public class DigsiteType {
         this.lootTableString = lootTableIdString;
     }
 
-    String getDigsiteTypeId()
-    {
-        return digsiteTypeId;
-    }
+//    String getDigsiteTypeId()
+//    {
+//        return digsiteTypeId;
+//    }
 
     Range<Integer> getXRange()
     {
@@ -105,9 +99,8 @@ public class DigsiteType {
 
     public static DigsiteType fromNbt(NbtElement nbt)
     {
-        if(nbt instanceof NbtCompound)
+        if(nbt instanceof NbtCompound root)
         {
-            NbtCompound root = (NbtCompound)nbt;
             String type = root.getString("type_id");
 
             int[] xRangeList = root.getIntArray("xRange");

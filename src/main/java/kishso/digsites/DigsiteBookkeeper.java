@@ -1,6 +1,7 @@
 package kishso.digsites;
 
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
@@ -31,10 +32,8 @@ public class DigsiteBookkeeper extends PersistentState {
         nbt.put("digsitesInWorld", digsitesNbt);
 
         NbtCompound placedMarkersNbt = new NbtCompound();
-        placedDigsiteMarkers.forEach((UUID id) -> {
-                placedMarkersNbt.putUuid(id.toString(), id);
-            }
-        );
+        placedDigsiteMarkers.forEach((UUID id) ->
+                placedMarkersNbt.putUuid(id.toString(), id));
         nbt.put("placedDigsiteMarkers", placedMarkersNbt);
 
         nbt.putInt("currentTickCount", tickCount);
@@ -49,7 +48,13 @@ public class DigsiteBookkeeper extends PersistentState {
         if(digsitesNbt != null) {
             for (String id : digsitesNbt.getKeys()) {
                 UUID uuid = UUID.fromString(id);
-                state.AddDigsite(uuid, Digsite.fromNbt(tag.getCompound(id)));
+                NbtElement digsiteNbt = digsitesNbt.get(id);
+                if(digsiteNbt != null) {
+                    state.AddDigsite(uuid, Digsite.fromNbt(digsiteNbt));
+                }
+                else {
+                    LOGGER.info("Digsite was null!");
+                }
             }
         }
 
@@ -66,7 +71,7 @@ public class DigsiteBookkeeper extends PersistentState {
         return state;
     }
 
-    private static Type<DigsiteBookkeeper> type = new Type<>(
+    private static final Type<DigsiteBookkeeper> type = new Type<>(
             DigsiteBookkeeper::new, // If there's no 'StateSaverAndLoader' yet create one
             DigsiteBookkeeper::createFromNbt, // If there is a 'StateSaverAndLoader' NBT, parse it with 'createFromNbt'
             null // Supposed to be an 'DataFixTypes' enum, but we can just pass null
@@ -74,7 +79,7 @@ public class DigsiteBookkeeper extends PersistentState {
 
     public void AddDigsite(UUID digsiteUUID, Digsite newDigsite)
     {
-        LOGGER.info("Added Digsite ["+digsiteUUID.toString()+"]");
+        LOGGER.info("Added Digsite [{}]", digsiteUUID.toString());
         this.digsitesInWorld.put(digsiteUUID, newDigsite);
     }
 
@@ -104,13 +109,13 @@ public class DigsiteBookkeeper extends PersistentState {
         loadedDigsiteTypes.put(digsiteId, type);
     }
 
-    public static DigsiteType GetDigsiteType(String digsiteId)
-    {
-        if(loadedDigsiteTypes.containsKey(digsiteId)){
-            return loadedDigsiteTypes.get(digsiteId);
-        }
-        return null;
-    }
+//    public static DigsiteType GetDigsiteType(String digsiteId)
+//    {
+//        if(loadedDigsiteTypes.containsKey(digsiteId)){
+//            return loadedDigsiteTypes.get(digsiteId);
+//        }
+//        return null;
+//    }
 
     public void UpdateTickDigsitesInWorld(ServerWorld world)
     {
@@ -118,7 +123,7 @@ public class DigsiteBookkeeper extends PersistentState {
         digsitesInWorld.forEach((uuid, digsite) -> {
             DigsiteType type = digsite.getDigsiteType();
             if(tickCount % type.getTickFrequency() == 0){
-                LOGGER.info("Triggering Digsite [" + uuid.toString() + "]");
+                LOGGER.info("Triggering Digsite [{}]", uuid.toString());
                 digsite.triggerDigsite(world);
             }
         });
