@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
+import kishso.digsites.DigsiteType;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -23,28 +24,44 @@ public final class CreateDigsiteCommand {
         dispatcher.register(literal("CreateDigsite")
                 .then(argument("digsiteId", UuidArgumentType.uuid())
                         .then(argument("location", BlockPosArgumentType.blockPos())
-                                .then(argument("xDelta", IntegerArgumentType.integer())
-                                        .then(argument("yDelta", IntegerArgumentType.integer())
-                                                .then(argument("zDelta", IntegerArgumentType.integer())
+                                .then(argument("xDeltaLower", IntegerArgumentType.integer())
+                                .then(argument("xDeltaUpper", IntegerArgumentType.integer())
+                                        .then(argument("yDeltaLower", IntegerArgumentType.integer())
+                                        .then(argument("yDeltaUpper", IntegerArgumentType.integer())
+                                                .then(argument("zDeltaLower", IntegerArgumentType.integer())
+                                                .then(argument("zDeltaUpper", IntegerArgumentType.integer())
                                                         .then(argument("lootTableString", StringArgumentType.string())
 
                                 .executes(ctx -> run(ctx.getSource(),
                                         UuidArgumentType.getUuid(ctx, "digsiteId"),
                                         BlockPosArgumentType.getBlockPos(ctx, "location"),
-                                        IntegerArgumentType.getInteger(ctx,  "xDelta"),
-                                        IntegerArgumentType.getInteger(ctx,  "yDelta"),
-                                        IntegerArgumentType.getInteger(ctx,  "zDelta"),
+                                        IntegerArgumentType.getInteger(ctx,  "xDeltaLower"),
+                                        IntegerArgumentType.getInteger(ctx,  "xDeltaUpper"),
+                                        IntegerArgumentType.getInteger(ctx,  "yDeltaLower"),
+                                        IntegerArgumentType.getInteger(ctx,  "yDeltaUpper"),
+                                        IntegerArgumentType.getInteger(ctx,  "zDeltaLower"),
+                                        IntegerArgumentType.getInteger(ctx,  "zDeltaUpper"),
                                         StringArgumentType.getString(ctx, "lootTableString")
-                                        ))))))))); // You can deal with the arguments out here and pipe them into the command.
+                                        )))))))))))); // You can deal with the arguments out here and pipe them into the command.
 
     }
 
     public static int run(ServerCommandSource source, UUID uuid, BlockPos pos,
-                          int xDelta, int yDelta, int zDelta, String lootTable)
+                          int xDeltaLower, int xDeltaUpper,
+                          int yDeltaLower, int yDeltaUpper,
+                          int zDeltaLower, int zDeltaUpper,
+                          String lootTable)
     {
 
         DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
-        Digsite newSite = new Digsite(pos, xDelta, yDelta,zDelta, lootTable);
+
+        DigsiteType type = new DigsiteType(
+                "Custom",
+                xDeltaLower, xDeltaUpper,
+                yDeltaLower, yDeltaUpper,
+                zDeltaLower, zDeltaUpper,
+                0.02f, 240000, lootTable);
+        Digsite newSite = new Digsite(pos, type);
         worldState.AddDigsite(uuid, newSite);
 
         source.sendMessage(Text.literal("Created Digsite!"));

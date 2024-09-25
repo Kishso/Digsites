@@ -12,6 +12,8 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.JigsawStructure;
+import net.minecraft.world.gen.structure.Structure;
 
 import java.util.Random;
 
@@ -19,24 +21,17 @@ public class Digsite {
 
     private BlockPos location;
 
-    private int xDeltaReach;
-    private int yDeltaReach;
-    private int zDeltaReach;
-
-    private float convertPercentage = 0.05f;
-    private int tickFrequency = 24000;
-    private int currentFrequencyCount = 0;
-
+    private DigsiteType digsiteType;
     private RegistryKey<LootTable> lootTable;
 
-    public Digsite(BlockPos position, int xDelta, int yDelta, int zDelta, String lootTableIdString)
+    public Digsite(BlockPos position,
+                   DigsiteType digsiteType)
     {
         this.location = position;
-        this.xDeltaReach = xDelta;
-        this.yDeltaReach = yDelta;
-        this.zDeltaReach = zDelta;
 
-        Identifier lootTableId = Identifier.tryParse(lootTableIdString);
+        this.digsiteType = digsiteType;
+
+        Identifier lootTableId = Identifier.tryParse(digsiteType.getLootTableString());
         if(lootTableId != null)
         {
             lootTable = RegistryKey.of(RegistryKeys.LOOT_TABLE, lootTableId);
@@ -54,8 +49,7 @@ public class Digsite {
         NbtCompound nbt = new NbtCompound();
 
         nbt.putIntArray("location", new int[]{location.getX(), location.getY(), location.getZ()});
-        nbt.putIntArray("deltaReach", new int[]{xDeltaReach, yDeltaReach, zDeltaReach});
-        nbt.putString("lootTable", lootTable.getValue().toString());
+        nbt.put("digsiteType", digsiteType.toNbt());
 
         return nbt;
     }
@@ -67,15 +61,17 @@ public class Digsite {
             NbtCompound root = (NbtCompound)nbt;
 
             int[] locationCoords = root.getIntArray("location");
-            int[] deltaReachList = root.getIntArray("deltaReach");
-            String lootTableString = root.getString("lootTable");
+            DigsiteType type = DigsiteType.fromNbt(root.getCompound("digsiteType"));
 
             return new Digsite(
                     new BlockPos(locationCoords[0],locationCoords[1],locationCoords[2]),
-                    deltaReachList[0], deltaReachList[1],deltaReachList[2],
-                    lootTableString);
+                    type);
         }
         return null;
+    }
+
+    public DigsiteType getDigsiteType(){
+        return digsiteType;
     }
 
     public int triggerDigsite(World world)
@@ -83,13 +79,19 @@ public class Digsite {
         int numBlocksReplaced = 0;
         Random rand = new Random();
 
+        DigsiteType.Range<Integer> xRange = digsiteType.getXRange();
+        DigsiteType.Range<Integer> yRange = digsiteType.getYRange();
+        DigsiteType.Range<Integer> zRange = digsiteType.getZRange();
+
+        float convertPercentage = digsiteType.getConvertPercentage();
+
         if(lootTable != null)
         {
-            for (int x = (-1 * xDeltaReach); x < xDeltaReach; x++)
+            for (int x = (xRange.Lower); x < xRange.Upper; x++)
             {
-                for (int y = (-1 * yDeltaReach); y < yDeltaReach; y++)
+                for (int y = (yRange.Lower); y < yRange.Upper; y++)
                 {
-                    for (int z = (-1 * zDeltaReach); z < zDeltaReach; z++)
+                    for (int z = (zRange.Lower); z < zRange.Upper; z++)
                     {
                         BlockPos targetBlock = location.add(x, y, z);
                         BlockState block = world.getBlockState(targetBlock);

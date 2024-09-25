@@ -1,16 +1,34 @@
 package kishso.digsites;
 
 import kishso.digsites.commands.CreateDigsiteCommand;
+import kishso.digsites.commands.PlaceDigsiteMarkerCommand;
 import kishso.digsites.commands.RemoveDigsiteCommand;
 import kishso.digsites.commands.TriggerDigsiteCommand;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.loot.entry.LootPoolEntryTypes;
-import net.minecraft.registry.Registry;
+import net.fabricmc.fabric.api.event.lifecycle.v1.*;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.decoration.DisplayEntity;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.*;
+import net.minecraft.world.StructureSpawns;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.gen.structure.JigsawStructure;
+import net.minecraft.world.gen.structure.Structure;
+import net.minecraft.world.gen.structure.StructureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
 
 
 public class Digsites implements ModInitializer {
@@ -19,7 +37,9 @@ public class Digsites implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("digsites");
 
-	public static final String MOD_ID = "kishso.digsites";
+	public static final String MOD_ID = "digsites";
+
+
 
 	@Override
 	public void onInitialize() {
@@ -30,12 +50,63 @@ public class Digsites implements ModInitializer {
 		LOGGER.info("Digsites Mod Init!");
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> TriggerDigsiteCommand.register(dispatcher));
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> PlaceDigsiteMarkerCommand.register(dispatcher));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> GetBlockStateCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> CreateDigsiteCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> RemoveDigsiteCommand.register(dispatcher)));
+
+		ArgumentTypeRegistry.registerArgumentType(Identifier.tryParse(MOD_ID, "digsiteType"),
+				DigsiteArgumentType.class, ConstantArgumentSerializer.of(DigsiteArgumentType::digsiteType));
+
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new DigsiteResourceListener());
+
+		ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
+			if(entity instanceof DisplayEntity.ItemDisplayEntity)
+			{
+				if(entity.getCommandTags().contains("isDigsite"))
+				{
+					DigsiteBookkeeper bookKeeper = DigsiteBookkeeper.getWorldState(serverWorld);
+					if(bookKeeper.placedDigsiteMarkers.contains(entity.getUuid())){
+						LOGGER.info("Found Digsite Place Marker...");
+					}
+					else {
+						LOGGER.info("Found Digsite Structure Marker");
+						Optional<String> digsiteTypeTag = entity.getCommandTags().stream().filter(
+								(str) -> {return str.contains("digsiteType");}
+						).findFirst();
+						if(digsiteTypeTag.isPresent())
+						{
+							String digsiteTypeStr =
+									Arrays.stream(digsiteTypeTag.get().split(":")).toList().get(1);
+							if(digsiteTypeStr != null)
+							{
+								if(bookKeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
+									DigsiteType digsiteType = bookKeeper.loadedDigsiteTypes.get(digsiteTypeStr);
+									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType);
+									bookKeeper.AddDigsite(entity.getUuid(), newDigsite);
+								}
+								LOGGER.info("Placed Digsite Structure");
+							}
+						}
+						entity.remove(Entity.RemovalReason.DISCARDED);
+					}
+
+				}
+			}
+		});
+
+		ServerTickEvents.END_WORLD_TICK.register((listener) -> {
+			ServerWorld world = listener.toServerWorld();
+			DigsiteBookkeeper bookkeeper = DigsiteBookkeeper.getWorldState(world);
+
+			bookkeeper.UpdateTickDigsitesInWorld(world);
+		});
+
+
 	}
 
 	public static Identifier id(String path){
 		return Identifier.of(MOD_ID, path);
 	}
 }
+

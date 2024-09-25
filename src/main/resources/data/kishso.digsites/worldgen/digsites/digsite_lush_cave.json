@@ -1,0 +1,24 @@
+{
+  "digsite_type_id" : "lush_digsite",
+  "loot_table_type_id" : "digsites:digsite_normal",
+  "bounds" :
+  {
+    "x_range": {
+      "lower": -4,
+      "upper": 5
+    },
+    "y_range": {
+      "lower": -3,
+      "upper": 1
+    },
+    "z_range": {
+      "lower": -4,
+      "upper": 5
+    }
+  },
+  "update" :
+  {
+    "chance_to_convert" : 0.2,
+    "tick_frequency": 24000
+  }
+}
