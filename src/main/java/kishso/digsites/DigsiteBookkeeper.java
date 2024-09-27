@@ -7,18 +7,15 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static kishso.digsites.Digsites.LOGGER;
 
 public class DigsiteBookkeeper extends PersistentState {
 
-    protected HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
-
+    protected static HashMap<UUID,Digsite> digsitesInWorld = new HashMap<>();
     protected static HashMap<String, DigsiteType> loadedDigsiteTypes = new HashMap<>();
+
     public List<UUID> placedDigsiteMarkers = new ArrayList<>();
 
     protected static int tickCount = 0;
@@ -80,7 +77,7 @@ public class DigsiteBookkeeper extends PersistentState {
     public void AddDigsite(UUID digsiteUUID, Digsite newDigsite)
     {
         LOGGER.info("Added Digsite [{}]", digsiteUUID.toString());
-        this.digsitesInWorld.put(digsiteUUID, newDigsite);
+        digsitesInWorld.put(digsiteUUID, newDigsite);
     }
 
     public boolean RemoveDigsite(UUID digsiteUUID)
@@ -88,9 +85,13 @@ public class DigsiteBookkeeper extends PersistentState {
         return digsitesInWorld.remove(digsiteUUID) != null;
     }
 
-    public Digsite GetDigsite(UUID digsiteUUID)
+    public static Digsite GetDigsite(UUID digsiteUUID)
     {
-        return this.digsitesInWorld.getOrDefault(digsiteUUID, null);
+        return digsitesInWorld.getOrDefault(digsiteUUID, null);
+    }
+
+    public static Set<UUID> GetCurrentDigsites(){
+        return digsitesInWorld.keySet();
     }
 
     public static DigsiteBookkeeper getWorldState(ServerWorld world)
@@ -109,22 +110,29 @@ public class DigsiteBookkeeper extends PersistentState {
         loadedDigsiteTypes.put(digsiteId, type);
     }
 
-//    public static DigsiteType GetDigsiteType(String digsiteId)
-//    {
-//        if(loadedDigsiteTypes.containsKey(digsiteId)){
-//            return loadedDigsiteTypes.get(digsiteId);
-//        }
-//        return null;
-//    }
+    public static Collection<DigsiteType> GetAllLoadedDigsiteType()
+    {
+        return loadedDigsiteTypes.values();
+    }
+
+    public static DigsiteType GetDigsiteType(String digsiteId)
+    {
+        if(loadedDigsiteTypes.containsKey(digsiteId)){
+            return loadedDigsiteTypes.get(digsiteId);
+        }
+        return null;
+    }
 
     public void UpdateTickDigsitesInWorld(ServerWorld world)
     {
         tickCount++;
         digsitesInWorld.forEach((uuid, digsite) -> {
             DigsiteType type = digsite.getDigsiteType();
-            if(tickCount % type.getTickFrequency() == 0){
-                LOGGER.info("Triggering Digsite [{}]", uuid.toString());
-                digsite.triggerDigsite(world);
+            if(type != null) {
+                if (tickCount % type.getTickFrequency() == 0) {
+                    LOGGER.info("Triggering Digsite [{}]", uuid.toString());
+                    digsite.triggerDigsite(world);
+                }
             }
         });
     }

@@ -2,7 +2,6 @@ package kishso.digsites;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.BrushableBlock;
 import net.minecraft.block.entity.BrushableBlockEntity;
 import net.minecraft.loot.LootTable;
 import net.minecraft.nbt.NbtCompound;
@@ -12,23 +11,29 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.JigsawStructure;
-import net.minecraft.world.gen.structure.Structure;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class Digsite {
 
     private BlockPos location;
-
+    private UUID digsiteId;
     private DigsiteType digsiteType;
     private RegistryKey<LootTable> lootTable;
 
     public Digsite(BlockPos position,
                    DigsiteType digsiteType)
     {
-        this.location = position;
+        new Digsite(position, digsiteType, UUID.randomUUID());
+    }
 
+    public Digsite(BlockPos position,
+                   DigsiteType digsiteType,
+                   UUID uuid)
+    {
+        this.location = position;
+        this.digsiteId = uuid;
         this.digsiteType = digsiteType;
 
         Identifier lootTableId = Identifier.tryParse(digsiteType.getLootTableString());
@@ -39,9 +44,9 @@ public class Digsite {
 
     }
 
-    public Digsite()
+    public UUID getDigsiteId()
     {
-
+        return digsiteId;
     }
 
     public NbtElement toNbt()
@@ -50,22 +55,23 @@ public class Digsite {
 
         nbt.putIntArray("location", new int[]{location.getX(), location.getY(), location.getZ()});
         nbt.put("digsiteType", digsiteType.toNbt());
+        nbt.putUuid("digsiteId", digsiteId);
 
         return nbt;
     }
 
     public static Digsite fromNbt(NbtElement nbt)
     {
-        if(nbt instanceof NbtCompound)
+        if(nbt instanceof NbtCompound root)
         {
-            NbtCompound root = (NbtCompound)nbt;
 
             int[] locationCoords = root.getIntArray("location");
             DigsiteType type = DigsiteType.fromNbt(root.getCompound("digsiteType"));
+            UUID digsiteId = root.getUuid("digsiteId");
 
             return new Digsite(
                     new BlockPos(locationCoords[0],locationCoords[1],locationCoords[2]),
-                    type);
+                    type, digsiteId);
         }
         return null;
     }
@@ -98,8 +104,6 @@ public class Digsite {
                         if (block.isOf(Blocks.GRAVEL) && rand.nextFloat() <= convertPercentage)
                         {
                             BlockState newBlockState = Blocks.SUSPICIOUS_GRAVEL.getDefaultState();
-                            BrushableBlock newBlock = (BrushableBlock) newBlockState.getBlock();
-
                             world.setBlockState(targetBlock, newBlockState);
 
                             if (newBlockState.hasBlockEntity())
@@ -110,16 +114,12 @@ public class Digsite {
                                     blockEntity.setLootTable(lootTable, rand.nextLong());
                                 }
                             }
-
                             numBlocksReplaced++;
                         }
                     }
                 }
             }
         }
-
         return numBlocksReplaced;
     }
-
-
 }

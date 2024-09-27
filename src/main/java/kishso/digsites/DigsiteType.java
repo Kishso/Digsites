@@ -48,10 +48,10 @@ public class DigsiteType {
         this.lootTableString = lootTableIdString;
     }
 
-//    String getDigsiteTypeId()
-//    {
-//        return digsiteTypeId;
-//    }
+    public String getDigsiteTypeId()
+    {
+        return digsiteTypeId;
+    }
 
     Range<Integer> getXRange()
     {

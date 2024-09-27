@@ -4,6 +4,8 @@ import kishso.digsites.commands.CreateDigsiteCommand;
 import kishso.digsites.commands.PlaceDigsiteMarkerCommand;
 import kishso.digsites.commands.RemoveDigsiteCommand;
 import kishso.digsites.commands.TriggerDigsiteCommand;
+import kishso.digsites.commands.argtypes.DigsiteArgumentType;
+import kishso.digsites.commands.argtypes.DigsiteTypeArgumentType;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
@@ -12,19 +14,10 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.*;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.*;
-import net.minecraft.world.StructureSpawns;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.chunk.WorldChunk;
-import net.minecraft.world.gen.structure.JigsawStructure;
-import net.minecraft.world.gen.structure.Structure;
-import net.minecraft.world.gen.structure.StructureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,12 +44,14 @@ public class Digsites implements ModInitializer {
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> TriggerDigsiteCommand.register(dispatcher));
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> PlaceDigsiteMarkerCommand.register(dispatcher));
-		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> GetBlockStateCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> CreateDigsiteCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> RemoveDigsiteCommand.register(dispatcher)));
 
 		ArgumentTypeRegistry.registerArgumentType(Identifier.tryParse(MOD_ID, "digsiteType"),
-				DigsiteArgumentType.class, ConstantArgumentSerializer.of(DigsiteArgumentType::digsiteType));
+				DigsiteTypeArgumentType.class, ConstantArgumentSerializer.of(DigsiteTypeArgumentType::digsiteType));
+
+		ArgumentTypeRegistry.registerArgumentType(Identifier.tryParse(MOD_ID, "digsite"),
+				DigsiteArgumentType.class, ConstantArgumentSerializer.of(DigsiteArgumentType::digsite));
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new DigsiteResourceListener());
 
@@ -72,7 +67,7 @@ public class Digsites implements ModInitializer {
 					else {
 						LOGGER.info("Found Digsite Structure Marker");
 						Optional<String> digsiteTypeTag = entity.getCommandTags().stream().filter(
-								(str) -> {return str.contains("digsiteType");}
+								(str) -> str.contains("digsiteType")
 						).findFirst();
 						if(digsiteTypeTag.isPresent())
 						{
@@ -80,9 +75,9 @@ public class Digsites implements ModInitializer {
 									Arrays.stream(digsiteTypeTag.get().split(":")).toList().get(1);
 							if(digsiteTypeStr != null)
 							{
-								if(bookKeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
-									DigsiteType digsiteType = bookKeeper.loadedDigsiteTypes.get(digsiteTypeStr);
-									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType);
+								if(DigsiteBookkeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
+									DigsiteType digsiteType = DigsiteBookkeeper.loadedDigsiteTypes.get(digsiteTypeStr);
+									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType, entity.getUuid());
 									bookKeeper.AddDigsite(entity.getUuid(), newDigsite);
 								}
 								LOGGER.info("Placed Digsite Structure");
