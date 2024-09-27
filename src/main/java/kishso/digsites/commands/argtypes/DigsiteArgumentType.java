@@ -18,6 +18,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class DigsiteArgumentType implements ArgumentType<Digsite> {
 
+    public static SuggestionProvider<ServerCommandSource> DigsiteArgSuggestionProvider;
+
     public DigsiteArgumentType()
     {
     }

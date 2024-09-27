@@ -16,19 +16,27 @@ import net.minecraft.world.gen.structure.JigsawStructure;
 import net.minecraft.world.gen.structure.Structure;
 
 import java.util.Random;
+import java.util.UUID;
 
 public class Digsite {
 
     private BlockPos location;
-
+    private UUID digsiteId;
     private DigsiteType digsiteType;
     private RegistryKey<LootTable> lootTable;
 
     public Digsite(BlockPos position,
                    DigsiteType digsiteType)
     {
-        this.location = position;
+        new Digsite(position, digsiteType, UUID.randomUUID());
+    }
 
+    public Digsite(BlockPos position,
+                   DigsiteType digsiteType,
+                   UUID uuid)
+    {
+        this.location = position;
+        this.digsiteId = uuid;
         this.digsiteType = digsiteType;
 
         Identifier lootTableId = Identifier.tryParse(digsiteType.getLootTableString());
@@ -44,12 +52,18 @@ public class Digsite {
 
     }
 
+    public UUID getDigsiteId()
+    {
+        return digsiteId;
+    }
+
     public NbtElement toNbt()
     {
         NbtCompound nbt = new NbtCompound();
 
         nbt.putIntArray("location", new int[]{location.getX(), location.getY(), location.getZ()});
         nbt.put("digsiteType", digsiteType.toNbt());
+        nbt.putUuid("digsiteId", digsiteId);
 
         return nbt;
     }
@@ -62,10 +76,11 @@ public class Digsite {
 
             int[] locationCoords = root.getIntArray("location");
             DigsiteType type = DigsiteType.fromNbt(root.getCompound("digsiteType"));
+            UUID digsiteId = root.getUuid("digsiteId");
 
             return new Digsite(
                     new BlockPos(locationCoords[0],locationCoords[1],locationCoords[2]),
-                    type);
+                    type, digsiteId);
         }
         return null;
     }
