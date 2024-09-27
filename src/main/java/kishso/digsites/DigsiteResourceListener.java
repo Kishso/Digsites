@@ -59,7 +59,6 @@ public class DigsiteResourceListener implements SimpleSynchronousResourceReloadL
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            continue;
         }
     }
 }

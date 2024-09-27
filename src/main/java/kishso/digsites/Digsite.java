@@ -2,7 +2,6 @@ package kishso.digsites;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.block.BrushableBlock;
 import net.minecraft.block.entity.BrushableBlockEntity;
 import net.minecraft.loot.LootTable;
 import net.minecraft.nbt.NbtCompound;

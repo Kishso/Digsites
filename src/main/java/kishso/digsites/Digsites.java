@@ -67,7 +67,7 @@ public class Digsites implements ModInitializer {
 					else {
 						LOGGER.info("Found Digsite Structure Marker");
 						Optional<String> digsiteTypeTag = entity.getCommandTags().stream().filter(
-								(str) -> {return str.contains("digsiteType");}
+								(str) -> str.contains("digsiteType")
 						).findFirst();
 						if(digsiteTypeTag.isPresent())
 						{

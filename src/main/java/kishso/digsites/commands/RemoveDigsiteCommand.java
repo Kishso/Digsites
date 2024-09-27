@@ -5,11 +5,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
 import kishso.digsites.commands.argtypes.DigsiteArgumentType;
-import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-
-import java.util.UUID;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
