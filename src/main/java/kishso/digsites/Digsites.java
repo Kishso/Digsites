@@ -75,8 +75,8 @@ public class Digsites implements ModInitializer {
 									Arrays.stream(digsiteTypeTag.get().split(":")).toList().get(1);
 							if(digsiteTypeStr != null)
 							{
-								if(bookKeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
-									DigsiteType digsiteType = bookKeeper.loadedDigsiteTypes.get(digsiteTypeStr);
+								if(DigsiteBookkeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
+									DigsiteType digsiteType = DigsiteBookkeeper.loadedDigsiteTypes.get(digsiteTypeStr);
 									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType, entity.getUuid());
 									bookKeeper.AddDigsite(entity.getUuid(), newDigsite);
 								}

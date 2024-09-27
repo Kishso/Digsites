@@ -12,8 +12,6 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.JigsawStructure;
-import net.minecraft.world.gen.structure.Structure;
 
 import java.util.Random;
 import java.util.UUID;
@@ -47,11 +45,6 @@ public class Digsite {
 
     }
 
-    public Digsite()
-    {
-
-    }
-
     public UUID getDigsiteId()
     {
         return digsiteId;
@@ -70,9 +63,8 @@ public class Digsite {
 
     public static Digsite fromNbt(NbtElement nbt)
     {
-        if(nbt instanceof NbtCompound)
+        if(nbt instanceof NbtCompound root)
         {
-            NbtCompound root = (NbtCompound)nbt;
 
             int[] locationCoords = root.getIntArray("location");
             DigsiteType type = DigsiteType.fromNbt(root.getCompound("digsiteType"));
@@ -113,8 +105,6 @@ public class Digsite {
                         if (block.isOf(Blocks.GRAVEL) && rand.nextFloat() <= convertPercentage)
                         {
                             BlockState newBlockState = Blocks.SUSPICIOUS_GRAVEL.getDefaultState();
-                            BrushableBlock newBlock = (BrushableBlock) newBlockState.getBlock();
-
                             world.setBlockState(targetBlock, newBlockState);
 
                             if (newBlockState.hasBlockEntity())
@@ -125,7 +115,6 @@ public class Digsite {
                                     blockEntity.setLootTable(lootTable, rand.nextLong());
                                 }
                             }
-
                             numBlocksReplaced++;
                         }
                     }

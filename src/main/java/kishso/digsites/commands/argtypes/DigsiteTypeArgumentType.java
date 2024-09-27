@@ -51,25 +51,18 @@ public class DigsiteTypeArgumentType implements ArgumentType<DigsiteType> {
         // position and the ends where the next argument starts.
         String digsiteTypeStr = stringReader.getString().substring(argBeginning, stringReader.getCursor());
 
-        DigsiteType type = DigsiteBookkeeper.GetDigsiteType(digsiteTypeStr);
-        if( type != null ) {
-            return type;
-        }
-        else {
-            return null;
-        }
+        return DigsiteBookkeeper.GetDigsiteType(digsiteTypeStr);
     }
 
     public static class DigsiteTypeArgSuggestionProvider implements SuggestionProvider<ServerCommandSource> {
         @Override
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
-            final String remaining = builder.getRemaining();
             List<String> digsiteTypeIdStrings = new ArrayList<>();
             for(DigsiteType type : DigsiteBookkeeper.GetAllLoadedDigsiteType()){
                 digsiteTypeIdStrings.add(type.getDigsiteTypeId());
             }
 
-            if (context.getSource() instanceof ServerCommandSource source) {
+            if (context.getSource() instanceof ServerCommandSource) {
                 CommandSource.suggestMatching(digsiteTypeIdStrings, builder);
             }
 

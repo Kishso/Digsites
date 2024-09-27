@@ -9,7 +9,6 @@ import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
-import kishso.digsites.DigsiteType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -50,15 +49,8 @@ public class DigsiteArgumentType implements ArgumentType<Digsite> {
         // Now we substring the specific part we want to see using the starting cursor
         // position and the ends where the next argument starts.
         UUID digsiteId = UUID.fromString(stringReader.getString().substring(argBeginning, stringReader.getCursor()));
-        if(digsiteId == null){
-            return null;
-        }
 
-        Digsite digsite = DigsiteBookkeeper.GetDigsite(digsiteId);
-        if( digsite != null ) {
-            return digsite;
-        }
-        return null;
+        return DigsiteBookkeeper.GetDigsite(digsiteId);
     }
 
     public static class DigsiteArgSuggestionProvider implements SuggestionProvider<ServerCommandSource> {
@@ -69,7 +61,7 @@ public class DigsiteArgumentType implements ArgumentType<Digsite> {
                 digsiteStrings.add(uuid.toString());
             }
 
-            if (context.getSource() instanceof ServerCommandSource source) {
+            if (context.getSource() instanceof ServerCommandSource) {
                 CommandSource.suggestMatching(digsiteStrings, builder);
             }
 

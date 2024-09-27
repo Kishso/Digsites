@@ -2,19 +2,14 @@ package kishso.digsites.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
 import kishso.digsites.DigsiteType;
 import kishso.digsites.commands.argtypes.DigsiteTypeArgumentType;
 import net.minecraft.command.argument.BlockPosArgumentType;
-import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.UUID;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;

@@ -77,7 +77,7 @@ public class DigsiteBookkeeper extends PersistentState {
     public void AddDigsite(UUID digsiteUUID, Digsite newDigsite)
     {
         LOGGER.info("Added Digsite [{}]", digsiteUUID.toString());
-        this.digsitesInWorld.put(digsiteUUID, newDigsite);
+        digsitesInWorld.put(digsiteUUID, newDigsite);
     }
 
     public boolean RemoveDigsite(UUID digsiteUUID)
