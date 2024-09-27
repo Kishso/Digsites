@@ -44,7 +44,6 @@ public class Digsites implements ModInitializer {
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> TriggerDigsiteCommand.register(dispatcher));
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> PlaceDigsiteMarkerCommand.register(dispatcher));
-		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> GetBlockStateCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> CreateDigsiteCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> RemoveDigsiteCommand.register(dispatcher)));
 
@@ -78,7 +77,7 @@ public class Digsites implements ModInitializer {
 							{
 								if(bookKeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
 									DigsiteType digsiteType = bookKeeper.loadedDigsiteTypes.get(digsiteTypeStr);
-									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType);
+									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType, entity.getUuid());
 									bookKeeper.AddDigsite(entity.getUuid(), newDigsite);
 								}
 								LOGGER.info("Placed Digsite Structure");

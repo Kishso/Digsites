@@ -132,9 +132,6 @@ public class Digsite {
                 }
             }
         }
-
         return numBlocksReplaced;
     }
-
-
 }

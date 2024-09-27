@@ -24,7 +24,7 @@ public final class CreateDigsiteCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("CreateDigsite")
                 .then(argument("digsiteType", DigsiteTypeArgumentType.digsiteType())
-                        .suggests(DigsiteTypeArgumentType.DigsiteTypeArgSuggestionProvider)
+                        .suggests(new DigsiteTypeArgumentType.DigsiteTypeArgSuggestionProvider())
                         .then(argument("location", BlockPosArgumentType.blockPos())
                                 .executes(ctx -> run(ctx.getSource(),
                                         DigsiteTypeArgumentType.getDigsiteType(ctx, "digsiteType"),

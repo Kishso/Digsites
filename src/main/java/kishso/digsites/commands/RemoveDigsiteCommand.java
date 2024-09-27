@@ -19,7 +19,7 @@ public final class RemoveDigsiteCommand {
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal("RemoveDigsite")
                 .then(argument("digsite", DigsiteArgumentType.digsite())
-                        .suggests(DigsiteArgumentType.DigsiteArgSuggestionProvider)
+                        .suggests(new DigsiteArgumentType.DigsiteArgSuggestionProvider())
                         .executes(ctx -> run(ctx.getSource(), DigsiteArgumentType.getDigsite(ctx, "digsite"))))); // You can deal with the arguments out here and pipe them into the command.
 
     }

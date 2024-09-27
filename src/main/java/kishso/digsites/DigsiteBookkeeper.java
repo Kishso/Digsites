@@ -128,9 +128,11 @@ public class DigsiteBookkeeper extends PersistentState {
         tickCount++;
         digsitesInWorld.forEach((uuid, digsite) -> {
             DigsiteType type = digsite.getDigsiteType();
-            if(tickCount % type.getTickFrequency() == 0){
-                LOGGER.info("Triggering Digsite [{}]", uuid.toString());
-                digsite.triggerDigsite(world);
+            if(type != null) {
+                if (tickCount % type.getTickFrequency() == 0) {
+                    LOGGER.info("Triggering Digsite [{}]", uuid.toString());
+                    digsite.triggerDigsite(world);
+                }
             }
         });
     }
