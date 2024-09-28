@@ -1,19 +1,31 @@
 package kishso.digsites;
 
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.context.CommandContextBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BrushableBlockEntity;
+import net.minecraft.command.DataCommandObject;
+import net.minecraft.command.argument.NbtPathArgumentType;
 import net.minecraft.loot.LootTable;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.command.DataCommand;
+import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Random;
 import java.util.UUID;
+
+import static kishso.digsites.Digsites.LOGGER;
 
 public class Digsite {
 
@@ -54,7 +66,7 @@ public class Digsite {
         NbtCompound nbt = new NbtCompound();
 
         nbt.putIntArray("location", new int[]{location.getX(), location.getY(), location.getZ()});
-        nbt.put("digsiteType", digsiteType.toNbt());
+        nbt.putString("digsiteType", digsiteType.getDigsiteTypeId());
         nbt.putUuid("digsiteId", digsiteId);
 
         return nbt;
@@ -64,10 +76,13 @@ public class Digsite {
     {
         if(nbt instanceof NbtCompound root)
         {
-
-            int[] locationCoords = root.getIntArray("location");
-            DigsiteType type = DigsiteType.fromNbt(root.getCompound("digsiteType"));
             UUID digsiteId = root.getUuid("digsiteId");
+            int[] locationCoords = root.getIntArray("location");
+            DigsiteType type = DigsiteBookkeeper.GetDigsiteType(root.getString("digsiteType"));
+
+            if(type == null){
+                LOGGER.info("Warning: Digsite {} is missing digsite type...", digsiteId.toString());
+            }
 
             return new Digsite(
                     new BlockPos(locationCoords[0],locationCoords[1],locationCoords[2]),
@@ -108,10 +123,12 @@ public class Digsite {
 
                             if (newBlockState.hasBlockEntity())
                             {
-                                BrushableBlockEntity blockEntity = (BrushableBlockEntity)world.getBlockEntity(targetBlock);
+                                BrushableBlockEntity blockEntity = (BrushableBlockEntity) world.getBlockEntity(targetBlock);
                                 if(blockEntity != null)
                                 {
-                                    blockEntity.setLootTable(lootTable, rand.nextLong());
+                                    String nbtData = String.format("{LootTable:\"%s\"}", lootTable.getValue().toString());
+                                    String dataCommand = String.format("data merge block %d %d %d %s", targetBlock.getX(), targetBlock.getY(), targetBlock.getZ(), nbtData);
+                                    world.getServer().getCommandManager().executeWithPrefix(world.getServer().getCommandSource(), dataCommand);
                                 }
                             }
                             numBlocksReplaced++;

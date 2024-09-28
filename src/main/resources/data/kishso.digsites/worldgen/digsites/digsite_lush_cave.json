@@ -20,5 +20,41 @@
   {
     "chance_to_convert" : 0.2,
     "tick_frequency": 24000
-  }
+  },
+  "events" : [
+    {
+      "event_name": "replace_block_event",
+      "event_details":
+      {
+        "is_block" :
+          {
+            "id": "minecraft:gravel"
+          },
+        "replace_block" :
+        {
+          "id" : "minecraft:suspicious_gravel",
+          "nbt_data" : {
+            "raw_string" : "{LootTable:\"digsites:digsite_normal\"}"
+          }
+        }
+      }
+    },
+    {
+      "event_name": "replace_block_event",
+      "event_details":
+      {
+        "is_block" :
+        {
+          "id": "minecraft:sand"
+        },
+        "replace_block" :
+        {
+          "id" : "minecraft:suspicious_sand",
+          "nbt_data" : {
+            "raw_string" : "{LootTable:\"digsites:digsite_normal\"}"
+          }
+        }
+      }
+    }
+  ]
 }
