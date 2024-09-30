@@ -77,8 +77,9 @@ public class Digsites implements ModInitializer {
 							{
 								if(DigsiteBookkeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
 									DigsiteType digsiteType = DigsiteBookkeeper.loadedDigsiteTypes.get(digsiteTypeStr);
-									Digsite newDigsite = new Digsite(entity.getBlockPos(), digsiteType, entity.getUuid());
-									bookKeeper.AddDigsite(entity.getUuid(), newDigsite);
+									Digsite newDigsite = new Digsite(
+											entity.getBlockPos(),digsiteType, entity.getUuid());
+									bookKeeper.addDigsite(entity.getUuid(), newDigsite);
 								}
 								LOGGER.info("Placed Digsite Structure");
 							}
@@ -94,7 +95,7 @@ public class Digsites implements ModInitializer {
 			ServerWorld world = listener.toServerWorld();
 			DigsiteBookkeeper bookkeeper = DigsiteBookkeeper.getWorldState(world);
 
-			bookkeeper.UpdateTickDigsitesInWorld(world);
+			bookkeeper.UpdateDigsitesInWorld(world);
 		});
 
 

@@ -1,7 +1,10 @@
 package kishso.digsites;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kishso.digsites.digsite_events.DigsiteEvent;
+import kishso.digsites.digsite_events.DigsiteEventFactory;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 
@@ -10,7 +13,17 @@ import java.util.List;
 
 public class DigsiteType {
 
-    List<DigsiteEvent> digsiteEvents = new ArrayList<>();
+    public static class JsonConstants {
+        final static String digsiteTypeId = "digsite_type_id";
+        final static String bounds = "bounds";
+        final static String xRange = "x_range";
+        final static String yRange = "y_range";
+        final static String zRange = "z_range";
+        final static String lowerBounds = "lower";
+        final static String upperBounds = "upper";
+
+        final static String events = "events";
+    }
 
     public static class Range<T> {
         public final T Lower;
@@ -29,11 +42,7 @@ public class DigsiteType {
     private final Range<Integer> yRange;
     private final Range<Integer> zRange;
 
-
-    private final float convertPercentage;
-    private final int tickFrequency;
-
-    private final String lootTableString;
+    private List<DigsiteEvent> digsiteEvents = new ArrayList<>();
 
     public DigsiteType(
             String digsiteTypeString,
@@ -49,15 +58,29 @@ public class DigsiteType {
         this.yRange = new Range<>(yRangeLower, yRangeUpper);
         this.zRange = new Range<>(zRangeLower, zRangeUpper);
 
-        this.convertPercentage = convertPercentage;
-        this.tickFrequency = tickFrequency;
-
-        this.lootTableString = lootTableIdString;
     }
 
-    public static DigsiteType fromJson(JsonObject json)
+    public DigsiteType(JsonObject json)
     {
+        this.digsiteTypeId = json.get(JsonConstants.digsiteTypeId).getAsString();
 
+        JsonObject jsonBounds = json.getAsJsonObject(JsonConstants.bounds);
+        JsonObject xRange = jsonBounds.getAsJsonObject(JsonConstants.xRange);
+        JsonObject yRange = jsonBounds.getAsJsonObject(JsonConstants.yRange);
+        JsonObject zRange = jsonBounds.getAsJsonObject(JsonConstants.zRange);
+
+        this.xRange = new Range<>(xRange.get(JsonConstants.lowerBounds).getAsInt(),
+                xRange.get(JsonConstants.upperBounds).getAsInt());
+        this.yRange = new Range<>(yRange.get(JsonConstants.lowerBounds).getAsInt(),
+                yRange.get(JsonConstants.upperBounds).getAsInt());
+        this.zRange = new Range<>(zRange.get(JsonConstants.lowerBounds).getAsInt(),
+                zRange.get(JsonConstants.upperBounds).getAsInt());
+
+        JsonArray events = json.getAsJsonArray(JsonConstants.events);
+        for(JsonElement eventJson : events.asList()){
+            digsiteEvents.add(
+                    DigsiteEventFactory.parseDigsiteEvent(eventJson.getAsJsonObject()));
+        }
     }
 
     public String getDigsiteTypeId()
@@ -65,33 +88,22 @@ public class DigsiteType {
         return digsiteTypeId;
     }
 
-    Range<Integer> getXRange()
+    public List<DigsiteEvent> getDigsiteEvents(){
+        return digsiteEvents;
+    }
+
+    public Range<Integer> getXRange()
     {
         return xRange;
     }
 
-    Range<Integer> getYRange()
+    public Range<Integer> getYRange()
     {
         return yRange;
     }
 
-    Range<Integer> getZRange()
+    public Range<Integer> getZRange()
     {
         return zRange;
-    }
-
-    float getConvertPercentage()
-    {
-        return convertPercentage;
-    }
-
-    int getTickFrequency()
-    {
-        return tickFrequency;
-    }
-
-    String getLootTableString()
-    {
-        return lootTableString;
     }
 }

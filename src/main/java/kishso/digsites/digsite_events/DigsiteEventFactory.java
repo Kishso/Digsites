@@ -8,7 +8,7 @@ public class DigsiteEventFactory {
         if(jsonEvent.has("event_name"))
         switch(jsonEvent.get("event_name").getAsString()){
             case "replace_block_event":
-                return ReplaceBlockDigsiteEvent.fromJson(jsonEvent);
+                return new ReplaceBlockDigsiteEvent(jsonEvent);
             default:
                 break;
         }

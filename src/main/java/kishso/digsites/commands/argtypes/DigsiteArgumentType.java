@@ -50,14 +50,15 @@ public class DigsiteArgumentType implements ArgumentType<Digsite> {
         // position and the ends where the next argument starts.
         UUID digsiteId = UUID.fromString(stringReader.getString().substring(argBeginning, stringReader.getCursor()));
 
-        return DigsiteBookkeeper.GetDigsite(digsiteId);
+        return DigsiteBookkeeper.searchForDigsite(digsiteId);
     }
 
     public static class DigsiteArgSuggestionProvider implements SuggestionProvider<ServerCommandSource> {
         @Override
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
+            DigsiteBookkeeper keeper = DigsiteBookkeeper.getWorldState(context.getSource().getWorld());
             List<String> digsiteStrings = new ArrayList<>();
-            for(UUID uuid : DigsiteBookkeeper.GetCurrentDigsites()){
+            for(UUID uuid : keeper.getCurrentDigsites()){
                 digsiteStrings.add(uuid.toString());
             }
 

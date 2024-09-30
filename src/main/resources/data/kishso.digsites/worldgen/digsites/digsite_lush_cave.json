@@ -1,6 +1,5 @@
 {
   "digsite_type_id" : "lush_digsite",
-  "loot_table_type_id" : "digsites:digsite_normal",
   "bounds" :
   {
     "x_range": {
@@ -16,21 +15,18 @@
       "upper": 5
     }
   },
-  "update" :
-  {
-    "chance_to_convert" : 0.2,
-    "tick_frequency": 24000
-  },
   "events" : [
     {
       "event_name": "replace_block_event",
+      "tick_frequency": 24000,
       "event_details":
       {
+        "replace_chance": 0.2,
         "is_block" :
           {
             "id": "minecraft:gravel"
           },
-        "replace_block" :
+        "replace_block_with" :
         {
           "id" : "minecraft:suspicious_gravel",
           "nbt_data" : {
@@ -41,13 +37,15 @@
     },
     {
       "event_name": "replace_block_event",
+      "tick_frequency" : 24000,
       "event_details":
       {
+        "replace_chance": 0.2,
         "is_block" :
         {
           "id": "minecraft:sand"
         },
-        "replace_block" :
+        "replace_block_with" :
         {
           "id" : "minecraft:suspicious_sand",
           "nbt_data" : {

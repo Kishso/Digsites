@@ -16,8 +16,10 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public final class CreateDigsiteCommand {
 
+    public static final String commandName = "createDigsite";
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
-        dispatcher.register(literal("CreateDigsite")
+        dispatcher.register(literal(commandName)
                 .then(argument("digsiteType", DigsiteTypeArgumentType.digsiteType())
                         .suggests(new DigsiteTypeArgumentType.DigsiteTypeArgSuggestionProvider())
                         .then(argument("location", BlockPosArgumentType.blockPos())
@@ -32,7 +34,7 @@ public final class CreateDigsiteCommand {
         DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
 
         Digsite newSite = new Digsite(pos, type);
-        worldState.AddDigsite(newSite.getDigsiteId(), newSite);
+        worldState.addDigsite(newSite.getDigsiteId(), newSite);
 
         source.sendMessage(Text.literal("Created Digsite!"));
         return Command.SINGLE_SUCCESS; // Success

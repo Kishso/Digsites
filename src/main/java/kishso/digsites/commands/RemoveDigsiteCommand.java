@@ -13,8 +13,10 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public final class RemoveDigsiteCommand {
 
+    public static final String commandName = "removeDigsite";
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
-        dispatcher.register(literal("RemoveDigsite")
+        dispatcher.register(literal(commandName)
                 .then(argument("digsite", DigsiteArgumentType.digsite())
                         .suggests(new DigsiteArgumentType.DigsiteArgSuggestionProvider())
                         .executes(ctx -> run(ctx.getSource(), DigsiteArgumentType.getDigsite(ctx, "digsite"))))); // You can deal with the arguments out here and pipe them into the command.
@@ -26,7 +28,7 @@ public final class RemoveDigsiteCommand {
 
         DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
 
-        if(worldState.RemoveDigsite(digsite.getDigsiteId()))
+        if(worldState.removeDigsite(digsite.getDigsiteId()))
         {
             source.sendMessage(Text.literal("Digsite Removed!"));
             return Command.SINGLE_SUCCESS; // Success
