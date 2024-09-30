@@ -3,17 +3,11 @@ package kishso.digsites.commands;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import kishso.digsites.Digsite;
-import kishso.digsites.DigsiteBookkeeper;
 import kishso.digsites.DigsiteType;
 import kishso.digsites.commands.argtypes.DigsiteArgumentType;
 import kishso.digsites.digsite_events.DigsiteEvent;
-import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import java.util.UUID;
 
-import static kishso.digsites.Digsites.LOGGER;
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 

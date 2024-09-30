@@ -5,8 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kishso.digsites.digsite_events.DigsiteEvent;
 import kishso.digsites.digsite_events.DigsiteEventFactory;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,21 +34,19 @@ public class DigsiteType {
         }
     }
 
-    protected String digsiteTypeId;
+    protected final String digsiteTypeId;
 
     private final Range<Integer> xRange;
     private final Range<Integer> yRange;
     private final Range<Integer> zRange;
 
-    private List<DigsiteEvent> digsiteEvents = new ArrayList<>();
+    private final List<DigsiteEvent> digsiteEvents = new ArrayList<>();
 
     public DigsiteType(
             String digsiteTypeString,
            int xRangeLower, int xRangeUpper,
            int yRangeLower, int yRangeUpper,
-           int zRangeLower, int zRangeUpper,
-           float convertPercentage, int tickFrequency,
-           String lootTableIdString)
+           int zRangeLower, int zRangeUpper)
     {
         this.digsiteTypeId = digsiteTypeString;
 

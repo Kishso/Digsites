@@ -12,9 +12,9 @@ public abstract class DigsiteEvent {
         final static String eventsDetails = "event_details";
     }
 
-    private int tickFrequency;
-    private int tickOffset;
-    private String eventName;
+    private final int tickFrequency;
+    private final int tickOffset;
+    private final String eventName;
 
     DigsiteEvent (JsonObject jsonEvent){
         this.eventName = jsonEvent.get(JsonConstants.eventName).getAsString();

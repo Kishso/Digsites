@@ -15,15 +15,15 @@ import static kishso.digsites.Digsites.LOGGER;
 
 public class DigsiteBookkeeper extends PersistentState {
 
-    protected static HashMap<String, DigsiteType> loadedDigsiteTypes = new HashMap<>();
+    protected static final HashMap<String, DigsiteType> loadedDigsiteTypes = new HashMap<>();
     protected static int tickCount = 0;
-    public static List<UUID> placedDigsiteMarkers = new ArrayList<>();
+    public static final List<UUID> placedDigsiteMarkers = new ArrayList<>();
 
-    protected static HashMap<String, DigsiteWorldContext> globalDigsiteRecord = new HashMap<>();
+    protected static final HashMap<String, DigsiteWorldContext> globalDigsiteRecord = new HashMap<>();
     protected DigsiteWorldContext currentWorld;
 
     public static class DigsiteWorldContext {
-        private HashMap<UUID,Digsite> digsites = new HashMap<>();
+        private final HashMap<UUID,Digsite> digsites = new HashMap<>();
         protected String worldId;
         protected World world;
 

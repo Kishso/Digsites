@@ -53,8 +53,7 @@ public final class PlaceDigsiteMarkerCommand {
             entityNbt.putString("item_display","fixed");
             entityNbt.put("item", itemIdNbt);
 
-            DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
-            worldState.placedDigsiteMarkers.add(itemDisplayEntity.getUuid());
+            DigsiteBookkeeper.placedDigsiteMarkers.add(itemDisplayEntity.getUuid());
 
             itemDisplayEntity.readNbt(entityNbt);
         }

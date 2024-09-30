@@ -61,7 +61,7 @@ public class Digsites implements ModInitializer {
 				if(entity.getCommandTags().contains("isDigsite"))
 				{
 					DigsiteBookkeeper bookKeeper = DigsiteBookkeeper.getWorldState(serverWorld);
-					if(bookKeeper.placedDigsiteMarkers.contains(entity.getUuid())){
+					if(DigsiteBookkeeper.placedDigsiteMarkers.contains(entity.getUuid())){
 						LOGGER.info("Found Digsite Place Marker...");
 					}
 					else {
