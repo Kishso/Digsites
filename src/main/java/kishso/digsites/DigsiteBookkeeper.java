@@ -16,7 +16,6 @@ import static kishso.digsites.Digsites.LOGGER;
 public class DigsiteBookkeeper extends PersistentState {
 
     protected static final HashMap<String, DigsiteType> loadedDigsiteTypes = new HashMap<>();
-    protected static int tickCount = 0;
     public static final List<UUID> placedDigsiteMarkers = new ArrayList<>();
 
     protected static final HashMap<String, DigsiteWorldContext> globalDigsiteRecord = new HashMap<>();
@@ -60,20 +59,31 @@ public class DigsiteBookkeeper extends PersistentState {
         return currentWorld.digsites.remove(digsiteUUID) != null;
     }
 
-    public Digsite getDigsite(UUID digsiteUUID)
-    {
-        return currentWorld.digsites.getOrDefault(digsiteUUID, null);
-    }
-
     public Set<UUID> getCurrentDigsites(){
         return currentWorld.digsites.keySet();
+    }
+
+    public void UpdateDigsitesInWorld(World world)
+    {
+        currentWorld.digsites.forEach((uuid, digsite) -> {
+            DigsiteType type = digsite.getDigsiteType();
+            if (type != null) {
+                for (DigsiteEvent event : type.getDigsiteEvents()) {
+                    if (event.checkTick(world.getTime()) && event.isConditionsMet(digsite)) {
+                        event.run(digsite);
+                        LOGGER.info("Running Event [{}] at Digsite [{}]", event.getEventName(), uuid.toString());
+                    }
+                }
+            }
+        });
+
     }
 
     @Override
     public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         NbtCompound digsitesNbt = new NbtCompound();
         currentWorld.digsites.forEach( (UUID id, Digsite site) ->
-            digsitesNbt.put(id.toString(), site.toNbt())
+                digsitesNbt.put(id.toString(), site.toNbt())
         );
         nbt.put("digsitesInWorld", digsitesNbt);
 
@@ -83,38 +93,8 @@ public class DigsiteBookkeeper extends PersistentState {
         nbt.put("placedDigsiteMarkers", placedMarkersNbt);
 
         nbt.putString("currentWorldId", currentWorld.worldId);
-        nbt.putInt("currentTickCount", tickCount);
 
         return nbt;
-    }
-
-    public DigsiteWorldContext getDigsiteWorldContext(){
-        return currentWorld;
-    }
-
-    public String getCurrentWorldId(){
-        return currentWorld.worldId;
-    }
-
-    public void setCurrentWorldId(String worldId){
-        this.currentWorld.worldId = worldId;
-    }
-
-    public void UpdateDigsitesInWorld(World world)
-    {
-        tickCount++;
-        currentWorld.digsites.forEach((uuid, digsite) -> {
-            DigsiteType type = digsite.getDigsiteType();
-            if (type != null) {
-                for (DigsiteEvent event : type.getDigsiteEvents()) {
-                    if (event.checkTick(tickCount) && event.isConditionsMet(digsite)) {
-                        event.run(digsite);
-                        LOGGER.info("Running Event [{}] at Digsite [{}]", event.getEventName(), uuid.toString());
-                    }
-                }
-            }
-        });
-
     }
 
     public static DigsiteBookkeeper createFromNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
@@ -158,8 +138,6 @@ public class DigsiteBookkeeper extends PersistentState {
             }
         }
 
-        tickCount =  tag.getInt("currentTickCount");
-
         return state;
     }
 
@@ -176,11 +154,15 @@ public class DigsiteBookkeeper extends PersistentState {
         PersistentStateManager persistentStateManager = world.getPersistentStateManager();
         DigsiteBookkeeper digsitesState = persistentStateManager.getOrCreate(type, Digsites.MOD_ID);
 
-        if(digsitesState.currentWorld == null){
-            digsitesState.currentWorld = new DigsiteWorldContext(world.getRegistryKey().getValue().toString());
-            globalDigsiteRecord.put(digsitesState.currentWorld.worldId, digsitesState.currentWorld);
+        String worldId = world.getRegistryKey().getValue().toString();
+        if(globalDigsiteRecord.containsKey(worldId)){
+            digsitesState.currentWorld = globalDigsiteRecord.get(worldId);
         }
-        digsitesState.currentWorld.world = world;
+        else {
+            digsitesState.currentWorld = new DigsiteWorldContext(worldId);
+            globalDigsiteRecord.put(digsitesState.currentWorld.worldId, digsitesState.currentWorld);
+            digsitesState.currentWorld.world = world;
+        }
 
         digsitesState.markDirty();
         return digsitesState;

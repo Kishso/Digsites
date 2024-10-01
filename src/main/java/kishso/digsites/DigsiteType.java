@@ -42,20 +42,6 @@ public class DigsiteType {
 
     private final List<DigsiteEvent> digsiteEvents = new ArrayList<>();
 
-    public DigsiteType(
-            String digsiteTypeString,
-           int xRangeLower, int xRangeUpper,
-           int yRangeLower, int yRangeUpper,
-           int zRangeLower, int zRangeUpper)
-    {
-        this.digsiteTypeId = digsiteTypeString;
-
-        this.xRange = new Range<>(xRangeLower, xRangeUpper);
-        this.yRange = new Range<>(yRangeLower, yRangeUpper);
-        this.zRange = new Range<>(zRangeLower, zRangeUpper);
-
-    }
-
     public DigsiteType(JsonObject json)
     {
         this.digsiteTypeId = json.get(JsonConstants.digsiteTypeId).getAsString();
