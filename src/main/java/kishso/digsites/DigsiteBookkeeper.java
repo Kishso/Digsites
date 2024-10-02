@@ -157,6 +157,9 @@ public class DigsiteBookkeeper extends PersistentState {
         String worldId = world.getRegistryKey().getValue().toString();
         if(globalDigsiteRecord.containsKey(worldId)){
             digsitesState.currentWorld = globalDigsiteRecord.get(worldId);
+            if(digsitesState.currentWorld.world == null){
+                digsitesState.currentWorld.world = world;
+            }
         }
         else {
             digsitesState.currentWorld = new DigsiteWorldContext(worldId);

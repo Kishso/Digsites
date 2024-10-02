@@ -78,7 +78,6 @@ public class ReplaceBlockDigsiteEvent extends DigsiteEvent{
 
     @Override
     public void run(Digsite currentDigsite) {
-        int numBlocksReplaced = 0;
         Random rand = new Random();
 
         DigsiteType digsiteType = currentDigsite.getDigsiteType();
@@ -109,11 +108,10 @@ public class ReplaceBlockDigsiteEvent extends DigsiteEvent{
                             if(blockEntity != null)
                             {
                                 String nbtData = replacementBlockNbt.asString();
-                                String dataCommand = String.format("data merge block %d %d %d %s", targetBlock.getX(), targetBlock.getY(), targetBlock.getZ(), nbtData);
-                                digsiteWorld.getServer().getCommandManager().executeWithPrefix(digsiteWorld.getServer().getCommandSource(), dataCommand);
+                                String dataCommandStr = String.format("data merge block %d %d %d %s", targetBlock.getX(), targetBlock.getY(), targetBlock.getZ(), nbtData);
+                                digsiteWorld.getServer().getCommandManager().executeWithPrefix(digsiteWorld.getServer().getCommandSource(), dataCommandStr);
                             }
                         }
-                        numBlocksReplaced++;
                     }
                 }
             }
