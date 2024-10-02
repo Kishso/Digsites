@@ -36,24 +36,9 @@ public class DigsiteResourceListener implements SimpleSynchronousResourceReloadL
                     InputStreamReader jsonReader = new InputStreamReader(jsonStream);
                     JsonObject jsonData = JsonHelper.deserialize(jsonReader);
 
-                    String digsiteIdString = jsonData.get("digsite_type_id").getAsString();
+                    DigsiteType newType = new DigsiteType(jsonData);
 
-                    JsonObject jsonBounds = jsonData.getAsJsonObject("bounds");
-                    JsonObject xRange = jsonBounds.getAsJsonObject("x_range");
-                    JsonObject yRange = jsonBounds.getAsJsonObject("y_range");
-                    JsonObject zRange = jsonBounds.getAsJsonObject("z_range");
-
-                    JsonObject jsonUpdate = jsonData.getAsJsonObject("update");
-
-                    DigsiteType newType = new DigsiteType( digsiteIdString,
-                            xRange.get("lower").getAsInt(), xRange.get("upper").getAsInt(),
-                            yRange.get("lower").getAsInt(), yRange.get("upper").getAsInt(),
-                            zRange.get("lower").getAsInt(), zRange.get("upper").getAsInt(),
-                            jsonUpdate.get("chance_to_convert").getAsFloat(),
-                            jsonUpdate.get("tick_frequency").getAsInt(),
-                            jsonData.get("loot_table_type_id").getAsString());
-
-                    DigsiteBookkeeper.LoadDigsiteTypes(digsiteIdString, newType);
+                    DigsiteBookkeeper.LoadDigsiteTypes(newType.getDigsiteTypeId(), newType);
 
                 }
             } catch (IOException e) {

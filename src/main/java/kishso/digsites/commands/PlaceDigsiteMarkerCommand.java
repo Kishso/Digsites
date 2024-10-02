@@ -19,8 +19,10 @@ import static net.minecraft.server.command.CommandManager.literal;
 
 public final class PlaceDigsiteMarkerCommand {
 
+    public static final String commandName = "placeDigsiteMarker";
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
-        dispatcher.register(literal("placeDigsiteMarker")
+        dispatcher.register(literal(commandName)
                 .then(argument("digsiteTypeId", DigsiteTypeArgumentType.digsiteType())
                         .suggests(new DigsiteTypeArgumentType.DigsiteTypeArgSuggestionProvider())
                         .then(argument("location", BlockPosArgumentType.blockPos())
@@ -51,8 +53,7 @@ public final class PlaceDigsiteMarkerCommand {
             entityNbt.putString("item_display","fixed");
             entityNbt.put("item", itemIdNbt);
 
-            DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
-            worldState.placedDigsiteMarkers.add(itemDisplayEntity.getUuid());
+            DigsiteBookkeeper.placedDigsiteMarkers.add(itemDisplayEntity.getUuid());
 
             itemDisplayEntity.readNbt(entityNbt);
         }

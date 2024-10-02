@@ -4,19 +4,21 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
+import kishso.digsites.DigsiteType;
 import kishso.digsites.commands.argtypes.DigsiteArgumentType;
-import net.minecraft.command.argument.UuidArgumentType;
+import kishso.digsites.digsite_events.DigsiteEvent;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import java.util.UUID;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public final class TriggerDigsiteCommand {
 
+    public static final String commandName = "runDigsiteEvents";
+
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
-        dispatcher.register(literal("TriggerDigsite")
+        dispatcher.register(literal(commandName)
                                 .then(argument("digsite", DigsiteArgumentType.digsite())
                                         .suggests(new DigsiteArgumentType.DigsiteArgSuggestionProvider())
                 .executes(ctx -> run(ctx.getSource(), DigsiteArgumentType.getDigsite(ctx, "digsite"))))); // You can deal with the arguments out here and pipe them into the command.
@@ -25,14 +27,16 @@ public final class TriggerDigsiteCommand {
 
     public static int run(ServerCommandSource source, Digsite digsite)
     {
-
-        int numBlocksReplaced = 0;
-        if(digsite != null)
-        {
-             numBlocksReplaced = digsite.triggerDigsite(source.getWorld());
+        DigsiteBookkeeper.getWorldState(source.getWorld());
+        DigsiteType type = digsite.getDigsiteType();
+        if(type != null) {
+            for (DigsiteEvent event : type.getDigsiteEvents()) {
+                if (event.isConditionsMet(digsite)) {
+                    source.sendMessage(Text.literal(String.format("Running event [%s]", event.getEventName())));
+                    event.run(digsite);
+                }
+            }
         }
-
-        source.sendMessage(Text.literal(String.format("Replacing %d block(s)", numBlocksReplaced)));
         return Command.SINGLE_SUCCESS; // Success
     }
 }
