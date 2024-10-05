@@ -10,6 +10,7 @@ import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -33,7 +34,7 @@ public final class CreateDigsiteCommand {
     {
         DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
 
-        Digsite newSite = new Digsite(pos, type);
+        Digsite newSite = new Digsite(pos, Direction.SOUTH, type);
         worldState.addDigsite(newSite.getDigsiteId(), newSite);
 
         source.sendMessage(Text.literal("Created Digsite!"));

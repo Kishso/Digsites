@@ -82,18 +82,18 @@ public class ReplaceBlockDigsiteEvent extends DigsiteEvent{
 
         DigsiteType digsiteType = currentDigsite.getDigsiteType();
 
-        DigsiteType.Range<Integer> xRange = digsiteType.getXRange();
-        DigsiteType.Range<Integer> yRange = digsiteType.getYRange();
-        DigsiteType.Range<Integer> zRange = digsiteType.getZRange();
+        DigsiteType.Range<Integer> xRange = digsiteType.getXRange(currentDigsite.getDigsiteDirection());
+        DigsiteType.Range<Integer> yRange = digsiteType.getYRange(currentDigsite.getDigsiteDirection());
+        DigsiteType.Range<Integer> zRange = digsiteType.getZRange(currentDigsite.getDigsiteDirection());
 
         BlockPos digsiteLocation = currentDigsite.getDigsiteLocation();
         World digsiteWorld = currentDigsite.getContext().getWorld();
 
-        for (int x = (xRange.Lower); x < xRange.Upper; x++)
+        for (int x = (xRange.Lower); x <= xRange.Upper; x++)
         {
-            for (int y = (yRange.Lower); y < yRange.Upper; y++)
+            for (int y = (yRange.Lower); y <= yRange.Upper; y++)
             {
-                for (int z = (zRange.Lower); z < zRange.Upper; z++)
+                for (int z = (zRange.Lower); z <= zRange.Upper; z++)
                 {
                     BlockPos targetBlock = digsiteLocation.add(x, y, z);
                     BlockState block = digsiteWorld.getBlockState(targetBlock);

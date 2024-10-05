@@ -4,6 +4,7 @@ import kishso.digsites.digsite_events.DigsiteEvent;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.UUID;
@@ -15,20 +16,24 @@ public class Digsite {
     private BlockPos location;
     private UUID digsiteId;
     private DigsiteType digsiteType;
+    private Direction direction;
 
     public DigsiteBookkeeper.DigsiteWorldContext currentWorldContext;
 
     public Digsite(BlockPos position,
+                   Direction facingDirection,
                    DigsiteType digsiteType)
     {
-        new Digsite(position, digsiteType, UUID.randomUUID());
+        new Digsite(position, facingDirection, digsiteType, UUID.randomUUID());
     }
 
     public Digsite(BlockPos position,
+                   Direction facingDirection,
                    DigsiteType digsiteType,
                    UUID uuid)
     {
         this.location = position;
+        this.direction = facingDirection;
         this.digsiteId = uuid;
         this.digsiteType = digsiteType;
 
@@ -41,6 +46,10 @@ public class Digsite {
 
     public BlockPos getDigsiteLocation() {
         return location;
+    }
+
+    public Direction getDigsiteDirection() {
+        return direction;
     }
 
     public void setContext (DigsiteBookkeeper.DigsiteWorldContext context){
@@ -58,6 +67,7 @@ public class Digsite {
         nbt.putIntArray("location", new int[]{location.getX(), location.getY(), location.getZ()});
         nbt.putString("digsiteType", digsiteType.getDigsiteTypeId());
         nbt.putUuid("digsiteId", digsiteId);
+        nbt.putInt("digsiteDirection", direction.getId());
 
         return nbt;
     }
@@ -68,6 +78,7 @@ public class Digsite {
         {
             UUID digsiteId = root.getUuid("digsiteId");
             int[] locationCoords = root.getIntArray("location");
+            Direction direction = Direction.byId(root.getInt("digsiteDirection"));
 
             DigsiteType type = DigsiteBookkeeper.GetDigsiteType(root.getString("digsiteType"));
             if(type == null){
@@ -75,7 +86,7 @@ public class Digsite {
             }
 
             return new Digsite(
-                    new BlockPos(locationCoords[0],locationCoords[1],locationCoords[2]), type, digsiteId);
+                    new BlockPos(locationCoords[0],locationCoords[1],locationCoords[2]), direction, type, digsiteId);
         }
         return null;
     }
