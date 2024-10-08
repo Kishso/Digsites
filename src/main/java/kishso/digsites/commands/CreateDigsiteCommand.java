@@ -33,7 +33,7 @@ public final class CreateDigsiteCommand {
     {
         DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
 
-        Digsite newSite = new Digsite(pos, type);
+        Digsite newSite = new Digsite(pos, 0.0f, 0.0f, type);
         worldState.addDigsite(newSite.getDigsiteId(), newSite);
 
         source.sendMessage(Text.literal("Created Digsite!"));

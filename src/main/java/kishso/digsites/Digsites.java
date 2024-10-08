@@ -1,9 +1,6 @@
 package kishso.digsites;
 
-import kishso.digsites.commands.CreateDigsiteCommand;
-import kishso.digsites.commands.PlaceDigsiteMarkerCommand;
-import kishso.digsites.commands.RemoveDigsiteCommand;
-import kishso.digsites.commands.TriggerDigsiteCommand;
+import kishso.digsites.commands.*;
 import kishso.digsites.commands.argtypes.DigsiteArgumentType;
 import kishso.digsites.commands.argtypes.DigsiteTypeArgumentType;
 import net.fabricmc.api.ModInitializer;
@@ -46,6 +43,7 @@ public class Digsites implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> PlaceDigsiteMarkerCommand.register(dispatcher));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> CreateDigsiteCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> RemoveDigsiteCommand.register(dispatcher)));
+		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> HighlightDigsiteCommand.register(dispatcher)));
 
 		ArgumentTypeRegistry.registerArgumentType(Identifier.tryParse(MOD_ID, "digsiteType"),
 				DigsiteTypeArgumentType.class, ConstantArgumentSerializer.of(DigsiteTypeArgumentType::digsiteType));
@@ -66,6 +64,8 @@ public class Digsites implements ModInitializer {
 					}
 					else {
 						LOGGER.info("Found Digsite Structure Marker");
+						float entityPitch = entity.getPitch();
+						float entityYaw = entity.getYaw();
 						Optional<String> digsiteTypeTag = entity.getCommandTags().stream().filter(
 								(str) -> str.contains("digsiteType")
 						).findFirst();
@@ -78,7 +78,7 @@ public class Digsites implements ModInitializer {
 								if(DigsiteBookkeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
 									DigsiteType digsiteType = DigsiteBookkeeper.loadedDigsiteTypes.get(digsiteTypeStr);
 									Digsite newDigsite = new Digsite(
-											entity.getBlockPos(),digsiteType, entity.getUuid());
+											entity.getBlockPos(), entityYaw, entityPitch, digsiteType, entity.getUuid());
 									bookKeeper.addDigsite(entity.getUuid(), newDigsite);
 								}
 								LOGGER.info("Placed Digsite Structure");

@@ -26,7 +26,7 @@ public class DigsiteType {
     public static class Range<T> {
         public final T Lower;
         public final T Upper;
-
+        
         Range(T lower, T upper)
         {
             this.Lower = lower;
@@ -65,6 +65,13 @@ public class DigsiteType {
         }
     }
 
+    public DigsiteType(String typeId){
+        this.digsiteTypeId = typeId;
+        xRange = new Range<>(0,0);
+        yRange = new Range<>(0,0);
+        zRange = new Range<>(0,0);
+    }
+
     public String getDigsiteTypeId()
     {
         return digsiteTypeId;
@@ -88,4 +95,5 @@ public class DigsiteType {
     {
         return zRange;
     }
+
 }
