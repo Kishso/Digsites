@@ -103,8 +103,8 @@ public class Digsite {
         {
             UUID digsiteId = root.getUuid("digsiteId");
             int[] locationCords = root.getIntArray("location");
-            float hRotation = root.getFloat("digsiteYaw");
-            float vRotation = root.getFloat("digsitePitch");
+            float yaw = root.getFloat("digsiteYaw");
+            float pitch = root.getFloat("digsitePitch");
 
             DigsiteType type = DigsiteBookkeeper.GetDigsiteType(root.getString("digsiteType"));
             if(type == null){
@@ -113,7 +113,7 @@ public class Digsite {
             }
 
             return new Digsite(
-                    new BlockPos(locationCords[0],locationCords[1],locationCords[2]), hRotation, vRotation, type, digsiteId);
+                    new BlockPos(locationCords[0],locationCords[1],locationCords[2]), yaw, pitch, type, digsiteId);
         }
         return null;
     }
