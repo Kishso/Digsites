@@ -66,13 +66,10 @@ public class DigsiteBookkeeper extends PersistentState {
     public void UpdateDigsitesInWorld(World world)
     {
         currentWorld.digsites.forEach((uuid, digsite) -> {
-            DigsiteType type = digsite.getDigsiteType();
-            if (type != null) {
-                for (DigsiteEvent event : type.getDigsiteEvents()) {
-                    if (event.checkTick(world.getTime()) && event.isConditionsMet(digsite)) {
-                        event.run(digsite);
-                        LOGGER.info("Running Event [{}] at Digsite [{}]", event.getEventName(), uuid.toString());
-                    }
+            for (DigsiteEvent event : digsite.getDigsiteEvents()) {
+                if (event.checkTick(world.getTime()) && event.isConditionsMet(digsite)) {
+                    event.run(digsite);
+                    LOGGER.info("Running Event [{}] at Digsite [{}]", event.getEventName(), uuid.toString());
                 }
             }
         });

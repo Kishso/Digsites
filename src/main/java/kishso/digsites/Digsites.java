@@ -15,7 +15,6 @@ import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +64,8 @@ public class Digsites implements ModInitializer {
 					}
 					else {
 						LOGGER.info("Found Digsite Structure Marker");
-						Direction direction = entity.getFacing();
+						float entityPitch = entity.getPitch();
+						float entityYaw = entity.getYaw();
 						Optional<String> digsiteTypeTag = entity.getCommandTags().stream().filter(
 								(str) -> str.contains("digsiteType")
 						).findFirst();
@@ -78,7 +78,7 @@ public class Digsites implements ModInitializer {
 								if(DigsiteBookkeeper.loadedDigsiteTypes.containsKey(digsiteTypeStr)){
 									DigsiteType digsiteType = DigsiteBookkeeper.loadedDigsiteTypes.get(digsiteTypeStr);
 									Digsite newDigsite = new Digsite(
-											entity.getBlockPos(), direction, digsiteType, entity.getUuid());
+											entity.getBlockPos(), entityYaw, entityPitch, digsiteType, entity.getUuid());
 									bookKeeper.addDigsite(entity.getUuid(), newDigsite);
 								}
 								LOGGER.info("Placed Digsite Structure");

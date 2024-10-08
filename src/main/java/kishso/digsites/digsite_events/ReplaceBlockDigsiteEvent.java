@@ -10,6 +10,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.registry.Registries;
+import net.minecraft.server.command.CommandManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -80,11 +81,9 @@ public class ReplaceBlockDigsiteEvent extends DigsiteEvent{
     public void run(Digsite currentDigsite) {
         Random rand = new Random();
 
-        DigsiteType digsiteType = currentDigsite.getDigsiteType();
-
-        DigsiteType.Range<Integer> xRange = digsiteType.getXRange(currentDigsite.getDigsiteDirection());
-        DigsiteType.Range<Integer> yRange = digsiteType.getYRange(currentDigsite.getDigsiteDirection());
-        DigsiteType.Range<Integer> zRange = digsiteType.getZRange(currentDigsite.getDigsiteDirection());
+        DigsiteType.Range<Integer> xRange = currentDigsite.getXRange();
+        DigsiteType.Range<Integer> yRange = currentDigsite.getYRange();
+        DigsiteType.Range<Integer> zRange = currentDigsite.getZRange();
 
         BlockPos digsiteLocation = currentDigsite.getDigsiteLocation();
         World digsiteWorld = currentDigsite.getContext().getWorld();
@@ -109,7 +108,16 @@ public class ReplaceBlockDigsiteEvent extends DigsiteEvent{
                             {
                                 String nbtData = replacementBlockNbt.asString();
                                 String dataCommandStr = String.format("data merge block %d %d %d %s", targetBlock.getX(), targetBlock.getY(), targetBlock.getZ(), nbtData);
-                                digsiteWorld.getServer().getCommandManager().executeWithPrefix(digsiteWorld.getServer().getCommandSource(), dataCommandStr);
+
+                                if(digsiteWorld.getServer() == null){
+                                    continue; //Skip
+                                }
+
+                                CommandManager commandManager = digsiteWorld.getServer().getCommandManager();
+                                if(commandManager != null){
+                                    commandManager.executeWithPrefix(digsiteWorld.getServer().getCommandSource(), dataCommandStr);
+                                }
+
                             }
                         }
                     }

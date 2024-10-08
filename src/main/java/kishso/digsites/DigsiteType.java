@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kishso.digsites.digsite_events.DigsiteEvent;
 import kishso.digsites.digsite_events.DigsiteEventFactory;
-import net.minecraft.util.math.Direction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,15 +26,11 @@ public class DigsiteType {
     public static class Range<T> {
         public final T Lower;
         public final T Upper;
-
+        
         Range(T lower, T upper)
         {
             this.Lower = lower;
             this.Upper = upper;
-        }
-
-        Range<T> copy(){
-            return new Range<>(this.Lower, this.Upper);
         }
     }
 
@@ -70,6 +65,13 @@ public class DigsiteType {
         }
     }
 
+    public DigsiteType(String typeId){
+        this.digsiteTypeId = typeId;
+        xRange = new Range<>(0,0);
+        yRange = new Range<>(0,0);
+        zRange = new Range<>(0,0);
+    }
+
     public String getDigsiteTypeId()
     {
         return digsiteTypeId;
@@ -94,50 +96,4 @@ public class DigsiteType {
         return zRange;
     }
 
-    public Range<Integer> getXRange(Direction direction)
-    {
-        switch(direction){
-            case SOUTH:
-                return xRange.copy();
-            case EAST:
-                return new Range<>(zRange.Lower, zRange.Upper);
-            case WEST:
-                return new Range<>(zRange.Upper * -1, zRange.Lower * -1);
-            case NORTH:
-                return new Range<>(xRange.Upper * -1, xRange.Lower * -1);
-
-        }
-        // Default Rotation. Do Nothing
-        return xRange;
-    }
-
-    public Range<Integer> getYRange(Direction direction)
-    {
-        switch(direction){
-            case UP:
-                break;
-            case DOWN:
-                break;
-
-        }
-        // Default Rotation. Do Nothing
-        return yRange;
-    }
-
-    public Range<Integer> getZRange(Direction direction)
-    {
-        switch(direction){
-            case SOUTH:
-                return zRange.copy();
-            case EAST:
-                return new Range<>(xRange.Upper * -1, xRange.Lower * -1);
-            case WEST:
-                return new Range<>(xRange.Lower, xRange.Upper);
-            case NORTH:
-                return new Range<>(zRange.Upper * -1, zRange.Lower * -1);
-
-        }
-        // Default Rotation. Do Nothing
-        return zRange;
-    }
 }
