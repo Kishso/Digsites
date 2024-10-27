@@ -4,11 +4,14 @@ import com.mojang.brigadier.CommandDispatcher;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
 import kishso.digsites.commands.argtypes.DigsiteArgumentType;
+import net.minecraft.command.argument.UuidArgumentType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.nbt.*;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.util.math.BlockPos;
+
+import java.util.UUID;
 
 import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
@@ -19,15 +22,21 @@ public class HighlightDigsiteCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal(commandName)
-                .then(argument("digsite", DigsiteArgumentType.digsite())
+                .then(argument("digsite", UuidArgumentType.uuid())
                         .suggests(new DigsiteArgumentType.DigsiteArgSuggestionProvider())
-                        .executes(ctx -> run(ctx.getSource(), DigsiteArgumentType.getDigsite(ctx, "digsite"))))); // You can deal with the arguments out here and pipe them into the command.
+                        .executes(ctx -> run(ctx.getSource(), UuidArgumentType.getUuid(ctx, "digsite"))))); // You can deal with the arguments out here and pipe them into the command.
 
     }
 
-    public static int run(ServerCommandSource source, Digsite digsite)
+    public static int run(ServerCommandSource source, UUID digsiteId)
     {
-        DigsiteBookkeeper.getWorldState(source.getWorld());
+        DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
+
+        Digsite digsite = DigsiteBookkeeper.searchForDigsite(digsiteId);
+        if(digsite == null)
+        {
+            return 0;
+        }
 
         DisplayEntity.BlockDisplayEntity blockDisplayEntity =
                 new DisplayEntity.BlockDisplayEntity(EntityType.BLOCK_DISPLAY, source.getWorld());

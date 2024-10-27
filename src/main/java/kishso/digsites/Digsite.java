@@ -32,7 +32,7 @@ public class Digsite {
                    float digsitePitch,
                    DigsiteType digsiteType)
     {
-        new Digsite(position, digsiteYaw, digsitePitch, digsiteType, UUID.randomUUID());
+        this(position, digsiteYaw, digsitePitch, digsiteType, UUID.randomUUID());
     }
 
     public Digsite(BlockPos position,

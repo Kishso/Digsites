@@ -45,12 +45,6 @@ public class Digsites implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> RemoveDigsiteCommand.register(dispatcher)));
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> HighlightDigsiteCommand.register(dispatcher)));
 
-		ArgumentTypeRegistry.registerArgumentType(Identifier.tryParse(MOD_ID, "digsiteType"),
-				DigsiteTypeArgumentType.class, ConstantArgumentSerializer.of(DigsiteTypeArgumentType::digsiteType));
-
-		ArgumentTypeRegistry.registerArgumentType(Identifier.tryParse(MOD_ID, "digsite"),
-				DigsiteArgumentType.class, ConstantArgumentSerializer.of(DigsiteArgumentType::digsite));
-
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new DigsiteResourceListener());
 
 		ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
