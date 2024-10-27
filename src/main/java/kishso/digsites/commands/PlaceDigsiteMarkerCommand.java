@@ -5,7 +5,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import kishso.digsites.DigsiteBookkeeper;
 import kishso.digsites.DigsiteType;
-import kishso.digsites.Digsites;
 import kishso.digsites.commands.argtypes.DigsiteTypeArgumentType;
 import net.minecraft.command.argument.BlockPosArgumentType;
 import net.minecraft.entity.EntityType;
@@ -37,7 +36,7 @@ public final class PlaceDigsiteMarkerCommand {
 
     public static int run(ServerCommandSource source, String digsiteTypeId, BlockPos pos)
     {
-        DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
+        DigsiteBookkeeper.getWorldState(source.getWorld());
 
         DigsiteType digsiteType = DigsiteBookkeeper.GetDigsiteType(digsiteTypeId);
         if(digsiteType == null)

@@ -1,15 +1,11 @@
 package kishso.digsites;
 
 import kishso.digsites.commands.*;
-import kishso.digsites.commands.argtypes.DigsiteArgumentType;
-import kishso.digsites.commands.argtypes.DigsiteTypeArgumentType;
 import net.fabricmc.api.ModInitializer;
 
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.*;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.resource.ResourceType;
