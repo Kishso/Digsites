@@ -6,6 +6,9 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.*;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.DisplayEntity;
 import net.minecraft.resource.ResourceType;
@@ -42,6 +45,13 @@ public class Digsites implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> HighlightDigsiteCommand.register(dispatcher)));
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new DigsiteResourceListener());
+
+		ModContainer modContainer = FabricLoader.getInstance().getModContainer(MOD_ID).isPresent()? FabricLoader.getInstance().getModContainer(MOD_ID).get() : null;
+		if(modContainer != null){
+			ResourceManagerHelper.registerBuiltinResourcePack(Identifier.tryParse(MOD_ID, "default_digsites"),
+					modContainer, "Default Digsites",ResourcePackActivationType.DEFAULT_ENABLED);
+		}
+
 
 		ServerEntityEvents.ENTITY_LOAD.register((entity, serverWorld) -> {
 			if(entity instanceof DisplayEntity.ItemDisplayEntity)
