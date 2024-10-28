@@ -2,6 +2,7 @@ package kishso.digsites.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
 import kishso.digsites.DigsiteType;
@@ -20,18 +21,24 @@ public final class CreateDigsiteCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal(commandName)
-                .then(argument("digsiteType", DigsiteTypeArgumentType.digsiteType())
+                .then(argument("digsiteType", StringArgumentType.string())
                         .suggests(new DigsiteTypeArgumentType.DigsiteTypeArgSuggestionProvider())
                         .then(argument("location", BlockPosArgumentType.blockPos())
                                 .executes(ctx -> run(ctx.getSource(),
-                                        DigsiteTypeArgumentType.getDigsiteType(ctx, "digsiteType"),
+                                        StringArgumentType.getString(ctx, "digsiteType"),
                                         BlockPosArgumentType.getBlockPos(ctx, "location")))))); // You can deal with the arguments out here and pipe them into the command.
 
     }
 
-    public static int run(ServerCommandSource source, DigsiteType type, BlockPos pos)
+    public static int run(ServerCommandSource source, String typeId, BlockPos pos)
     {
         DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
+        DigsiteType type = worldState.GetDigsiteType(typeId);
+
+        if(type == null)
+        {
+            type = new DigsiteType(typeId);
+        }
 
         Digsite newSite = new Digsite(pos, 0.0f, 0.0f, type);
         worldState.addDigsite(newSite.getDigsiteId(), newSite);
