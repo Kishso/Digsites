@@ -1,0 +1,14 @@
+{
+  "structures": [
+    {
+      "structure": "kishso.digsites:deepslate_digsite",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "salt" : 987654321,
+    "type": "random_spread",
+    "spacing": 32,
+    "separation": 20
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "digsite_type_id" : "lush_digsite",
+  "bounds" :
+  {
+    "x_range": {
+      "lower": -4,
+      "upper": 4
+    },
+    "y_range": {
+      "lower": -2,
+      "upper": -1
+    },
+    "z_range": {
+      "lower": -8,
+      "upper": 7
+    }
+  },
+  "events" : [
+    {
+      "event_name": "replace_block_event",
+      "tick_frequency": 72000,
+      "event_details":
+      {
+        "replace_chance": 0.04,
+        "is_block" :
+          {
+            "id": "minecraft:gravel"
+          },
+        "replace_block_with" :
+        {
+          "id" : "minecraft:suspicious_gravel",
+          "nbt_data" : {
+            "raw_string" : "{LootTable:\"kishso.digsites:lush_digsite\"}"
+          }
+        }
+      }
+    }
+  ]
+}
