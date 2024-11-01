@@ -24,6 +24,7 @@ public final class PlaceDigsiteMarkerCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal(commandName)
+                .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
                 .then(argument("digsiteTypeId", StringArgumentType.string())
                         .suggests(new DigsiteTypeArgumentType.DigsiteTypeArgSuggestionProvider())
                         .then(argument("location", BlockPosArgumentType.blockPos())

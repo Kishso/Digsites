@@ -21,6 +21,7 @@ public final class CreateDigsiteCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal(commandName)
+                .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
                 .then(argument("digsiteType", StringArgumentType.string())
                         .suggests(new DigsiteTypeArgumentType.DigsiteTypeArgSuggestionProvider())
                         .then(argument("location", BlockPosArgumentType.blockPos())
@@ -33,7 +34,7 @@ public final class CreateDigsiteCommand {
     public static int run(ServerCommandSource source, String typeId, BlockPos pos)
     {
         DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
-        DigsiteType type = worldState.GetDigsiteType(typeId);
+        DigsiteType type = DigsiteBookkeeper.GetDigsiteType(typeId);
 
         if(type == null)
         {
