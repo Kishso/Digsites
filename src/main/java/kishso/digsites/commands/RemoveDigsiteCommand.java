@@ -20,6 +20,7 @@ public final class RemoveDigsiteCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal(commandName)
+                .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
                 .then(argument("digsite", UuidArgumentType.uuid())
                         .suggests(new DigsiteArgumentType.DigsiteArgSuggestionProvider())
                         .executes(ctx -> run(ctx.getSource(), UuidArgumentType.getUuid(ctx, "digsite"))))); // You can deal with the arguments out here and pipe them into the command.

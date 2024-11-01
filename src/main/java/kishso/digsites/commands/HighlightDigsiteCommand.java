@@ -1,5 +1,6 @@
 package kishso.digsites.commands;
 
+import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import kishso.digsites.Digsite;
 import kishso.digsites.DigsiteBookkeeper;
@@ -22,6 +23,7 @@ public class HighlightDigsiteCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher){
         dispatcher.register(literal(commandName)
+                .requires(serverCommandSource -> serverCommandSource.hasPermissionLevel(2))
                 .then(argument("digsite", UuidArgumentType.uuid())
                         .suggests(new DigsiteArgumentType.DigsiteArgSuggestionProvider())
                         .executes(ctx -> run(ctx.getSource(), UuidArgumentType.getUuid(ctx, "digsite"))))); // You can deal with the arguments out here and pipe them into the command.
@@ -30,7 +32,7 @@ public class HighlightDigsiteCommand {
 
     public static int run(ServerCommandSource source, UUID digsiteId)
     {
-        DigsiteBookkeeper worldState = DigsiteBookkeeper.getWorldState(source.getWorld());
+        DigsiteBookkeeper.getWorldState(source.getWorld());
 
         Digsite digsite = DigsiteBookkeeper.searchForDigsite(digsiteId);
         if(digsite == null)
@@ -63,7 +65,7 @@ public class HighlightDigsiteCommand {
         }
 
         source.getWorld().spawnEntity(blockDisplayEntity);
-        return 0; // Failure
+        return Command.SINGLE_SUCCESS;
 
 
 
