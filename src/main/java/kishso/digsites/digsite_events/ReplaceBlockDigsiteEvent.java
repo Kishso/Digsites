@@ -112,10 +112,10 @@ public class ReplaceBlockDigsiteEvent extends DigsiteEvent{
                                 if(digsiteWorld.getServer() == null){
                                     continue; //Skip
                                 }
-
                                 CommandManager commandManager = digsiteWorld.getServer().getCommandManager();
                                 if(commandManager != null){
-                                    commandManager.executeWithPrefix(digsiteWorld.getServer().getCommandSource(), dataCommandStr);
+                                    commandManager.executeWithPrefix(digsiteWorld.getServer().getCommandSource().withSilent(), dataCommandStr);
+
                                 }
 
                             }
