@@ -3,16 +3,16 @@
 	"id": "digsites",
 	"version": "${version}",
 	"name": "Digsites",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Adds Digsites to your world with data-driven functionality!",
 	"authors": [
 		"Me!"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://modrinth.com/mod/digsites",
+		"sources": "https://github.com/Kishso/Digsites"
 	},
 	"license": "CC0-1.0",
-	"icon": "assets/digsites/icon.png",
+	"icon": "assets/digsites/digsites.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -33,8 +33,8 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.21",
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.21.3",
 		"java": ">=21",
 		"fabric-api": "*"
 	},
