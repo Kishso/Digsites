@@ -20,6 +20,6 @@ plugins {
 }
 
 
-// include 'fabric'
+include 'fabric'
 
 include 'neoforge'
