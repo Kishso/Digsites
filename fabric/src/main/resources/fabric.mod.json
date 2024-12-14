@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "digsites",
+	"version": "${version}",
+	"name": "Digsites",
+	"description": "Adds Digsites to your world with data-driven functionality!",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/digsites",
+		"sources": "https://github.com/Kishso/Digsites"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/digsites/digsites.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"kishso.digsites.Digsites"
+		],
+		"fabric-datagen": [
+			"kishso.digsites.datagen.DigsitesDataGenerator"
+		]
+	},
+	"mixins": [
+		"digsites.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.21.3",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
