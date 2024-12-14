@@ -17,13 +17,8 @@ public record DigsiteArgumentType() {
         @Override
         public CompletableFuture<Suggestions> getSuggestions(CommandContext<ServerCommandSource> context, SuggestionsBuilder builder) {
             DigsiteBookkeeper keeper = DigsiteBookkeeper.getWorldState(context.getSource().getWorld());
-            List<String> digsiteStrings = new ArrayList<>();
             for(UUID uuid : keeper.getCurrentDigsites()){
-                digsiteStrings.add(uuid.toString());
-            }
-
-            if (context.getSource() instanceof ServerCommandSource) {
-                context.getSource().suggestMatching(digsiteStrings, builder);
+                builder.suggest(uuid.toString());
             }
 
             return builder.buildFuture();
