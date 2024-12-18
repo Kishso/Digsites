@@ -4,13 +4,16 @@ import kishso.digsites.digsite_events.DigsiteEvent;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 import static kishso.digsites.DigsitesMod.LOGGER;
 
@@ -145,68 +148,6 @@ public class DigsiteBookkeeper extends SavedData {
 
     }
 
-//    @Override
-//    public NbtCompound writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-//        NbtCompound digsitesNbt = new NbtCompound();
-//        currentWorld.digsites.forEach( (UUID id, Digsite site) ->
-//                digsitesNbt.put(id.toString(), site.toNbt())
-//        );
-//        nbt.put("digsitesInWorld", digsitesNbt);
-//
-//        NbtCompound placedMarkersNbt = new NbtCompound();
-//        placedDigsiteMarkers.forEach((UUID id) ->
-//                placedMarkersNbt.putUuid(id.toString(), id));
-//        nbt.put("placedDigsiteMarkers", placedMarkersNbt);
-//
-//        nbt.putString("currentWorldId", currentWorld.worldId);
-//
-//        return nbt;
-//    }
-
-//    public static DigsiteBookkeeper createFromNbt(CompoundTag tag, HolderLookup.Provider provider) {
-//        DigsiteBookkeeper state = new DigsiteBookkeeper();
-//
-//        DigsiteWorldContext digsitesInWorld = null;
-//        if(tag.contains("currentWorldId")){
-//            String worldId = tag.getString("currentWorldId");
-//            if(globalDigsiteRecord.containsKey(worldId)){
-//                digsitesInWorld = globalDigsiteRecord.get(worldId);
-//            }
-//            else {
-//                digsitesInWorld = new DigsiteWorldContext(worldId);
-//                globalDigsiteRecord.put(worldId, digsitesInWorld);
-//            }
-//        }
-//
-//        if(digsitesInWorld == null){
-//            return state;
-//        }
-//
-//        CompoundTag digsitesNbt = tag.getCompound("digsitesInWorld");
-//        if(digsitesNbt != null) {
-//            for (String id : digsitesNbt.getAllKeys()) {
-//                UUID uuid = UUID.fromString(id);
-//                Tag digsiteNbt = digsitesNbt.get(id);
-//                if(digsiteNbt != null) {
-//                    digsitesInWorld.addDigsite(uuid, Digsite.fromNbt(digsiteNbt));
-//                }
-//                else {
-//                    LOGGER.info("Digsite was null!");
-//                }
-//            }
-//        }
-//
-//        CompoundTag placedMarkersNbt = tag.getCompound("placedDigsiteMarkers");
-//        if(placedMarkersNbt != null) {
-//            for (String id : placedMarkersNbt.getAllKeys()) {
-//                UUID uuid = UUID.fromString(id);
-//                placedDigsiteMarkers.add(uuid);
-//            }
-//        }
-//
-//        return state;
-//    }
-
     private static final SavedData.Factory<DigsiteBookkeeper> type = new SavedData.Factory<>(
             DigsiteBookkeeper::new, // If there's no 'StateSaverAndLoader' yet create one
             DigsiteBookkeeper::load, // If there is a 'StateSaverAndLoader' NBT, parse it with 'createFromNbt'
@@ -218,8 +159,9 @@ public class DigsiteBookkeeper extends SavedData {
     public static DigsiteBookkeeper getWorldState(ServerLevel world)
     {
         DigsiteBookkeeper digsitesState = world.getDataStorage().computeIfAbsent(type, DigsitesMod.MODID);
-
-        String worldId = world.dimension().registry().getPath();
+        ServerLevel level = world.getLevel();
+        Component levelDesc = level.getDescription();
+        String worldId = levelDesc.getString();
         if(globalDigsiteRecord.containsKey(worldId)){
             digsitesState.currentWorld = globalDigsiteRecord.get(worldId);
             if(digsitesState.currentWorld.world == null){

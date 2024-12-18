@@ -1,15 +1,11 @@
 package kishso.digsites.commands.argtypes;
 
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import kishso.digsites.DigsiteBookkeeper;
-import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.level.ServerEntity;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -21,9 +17,8 @@ public record DigsiteArgumentType() {
         @Override
         public CompletableFuture<Suggestions> getSuggestions(CommandContext context, SuggestionsBuilder builder) {
             if(context.getSource() instanceof CommandSourceStack) {
-                DigsiteBookkeeper keeper = DigsiteBookkeeper.getWorldState(((CommandSourceStack) context.getSource()).getLevel());
-                for (UUID uuid : keeper.getCurrentDigsites()) {
-                    builder.suggest(uuid.toString());
+                DigsiteBookkeeper keeper = DigsiteBookkeeper.getWorldState(((CommandSourceStack) context.getSource()).getLevel());for (UUID uuid : keeper.getCurrentDigsites()) {
+                        builder.suggest(uuid.toString());
                 }
             }
 

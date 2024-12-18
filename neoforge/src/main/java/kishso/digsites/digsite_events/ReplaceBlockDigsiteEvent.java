@@ -16,8 +16,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 
-import java.io.*;
-import java.nio.charset.Charset;
 import java.util.Random;
 
 public class ReplaceBlockDigsiteEvent extends DigsiteEvent{
@@ -98,12 +96,17 @@ public class ReplaceBlockDigsiteEvent extends DigsiteEvent{
             {
                 for (int z = (zRange.Lower); z <= zRange.Upper; z++)
                 {
+                    if(digsiteWorld.getServer() == null ||
+                            !digsiteWorld.getServer().getConnection().running){
+                        continue; // Skip if server is not running else getBlockState will hang
+                    }
+
                     BlockPos targetBlock = digsiteLocation.offset(x, y, z);
                     BlockState block = digsiteWorld.getBlockState(targetBlock);
                     if (block.getBlock() == lookoutBlock  && rand.nextFloat() <= replaceChance)
                     {
                         BlockState newBlockState = replacementBlock.defaultBlockState();
-                        digsiteWorld.setBlockAndUpdate(targetBlock, newBlockState);
+                        digsiteWorld.setBlock(targetBlock, newBlockState, Block.UPDATE_ALL_IMMEDIATE);
 
                         if (newBlockState.hasBlockEntity())
                         {
